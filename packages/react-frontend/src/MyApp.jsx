@@ -10,7 +10,7 @@ function MyApp() {
   function removeOneCharacter(index) {
     const id = characters[index]._id;
     const promise = fetch(`http://localhost:8000/users/${id}`, {
-      method: "DELETE",
+      method: "DELETE"
     }).then((res) => {
       if (res.status === 204) {
         const updated = characters.filter((character, i) => {
@@ -43,9 +43,9 @@ function MyApp() {
     const promise = fetch("http://localhost:8000/users", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(person),
+      body: JSON.stringify(person)
     });
 
     return promise;
@@ -62,7 +62,10 @@ function MyApp() {
 
   return (
     <div className="container">
-      <Table characterData={characters} removeCharacter={removeOneCharacter} />
+      <Table
+        characterData={characters}
+        removeCharacter={removeOneCharacter}
+      />
       <Form handleSubmit={updateList} />
     </div>
   );
