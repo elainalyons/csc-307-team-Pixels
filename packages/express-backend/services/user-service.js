@@ -38,5 +38,5 @@ export default {
   findUserById,
   findUserByName,
   findUserByJob,
-  removeUser,
+  removeUser
 };
