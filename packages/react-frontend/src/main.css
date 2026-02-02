@@ -870,7 +870,8 @@ button:hover,
 [type="reset"]:hover,
 [type="button"]:hover,
 [type="image"]:hover {
-  border: 1px solid rgb(2.3651452282, 80.4149377593, 187.6348547718);
+  border: 1px solid
+    rgb(2.3651452282, 80.4149377593, 187.6348547718);
   background: rgb(2.3651452282, 80.4149377593, 187.6348547718);
   color: #ffffff;
   text-decoration: none;
@@ -890,7 +891,8 @@ button:active,
 [type="button"]:active,
 [type="image"]:focus,
 [type="image"]:active {
-  border: 1px solid rgb(2.3651452282, 80.4149377593, 187.6348547718);
+  border: 1px solid
+    rgb(2.3651452282, 80.4149377593, 187.6348547718);
   background: rgb(2.3651452282, 80.4149377593, 187.6348547718);
   color: #ffffff;
   text-decoration: none;
@@ -919,8 +921,13 @@ a.accent-button:hover,
 a.accent-button:focus,
 a.accent-button:active {
   color: #ffffff;
-  border: 1px solid rgb(28.3238866397, 183.6761133603, 100.4210526316);
-  background: rgb(28.3238866397, 183.6761133603, 100.4210526316);
+  border: 1px solid
+    rgb(28.3238866397, 183.6761133603, 100.4210526316);
+  background: rgb(
+    28.3238866397,
+    183.6761133603,
+    100.4210526316
+  );
 }
 
 .muted-button,
