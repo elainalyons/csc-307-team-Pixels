@@ -1,11 +1,8 @@
-// start by running node backend.js from express-backend directory
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-
-import userService from "./services/user-service.js";
+import * as journalService from "./services/journal-service.js";
 
 dotenv.config();
 
@@ -13,8 +10,9 @@ const { MONGO_CONNECTION_STRING } = process.env;
 
 mongoose.set("debug", true);
 mongoose
-  .connect(MONGO_CONNECTION_STRING + "users") // connect to Db "users"
-  .catch((error) => console.log(error));
+  .connect(MONGO_CONNECTION_STRING + "journal")
+  .then(() => console.log("✅ MongoDB connected to journal DB"))
+  .catch((error) => console.log("❌ MongoDB error:", error));
 
 const app = express();
 const port = 8000;
@@ -22,56 +20,38 @@ const port = 8000;
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
+app.get("/", (req, res) => res.send("Hello World!"));
+
+// GET /entries
+app.get("/entries", async (req, res) => {
+  try {
+    const entries = await journalService.getAllEntries();
+    res.status(200).json({ entries });
+  } catch (error) {
+    console.error("GET /entries error:", error);
+    res.status(500).send("An error occurred in the server.");
+  }
 });
 
-app.get("/users", (req, res) => {
-  const name = req.query["name"];
-  const job = req.query["job"];
-  userService
-    .getUsers(name, job)
-    .then((result) => {
-      res.send({ users_list: result });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send("An error ocurred in the server.");
-    });
-});
+// POST /entries
+app.post("/entries", async (req, res) => {
+  try {
+    console.log("POST /entries hit");
+    console.log("content-type:", req.headers["content-type"]);
+    console.log("body:", req.body);
 
-app.get("/users/:id", (req, res) => {
-  const id = req.params["id"];
-  userService.findUserById(id).then((result) => {
-    if (result === undefined || result === null) {
-      res.status(404).send("Resource not found.");
-    } else {
-      res.send({ users_list: result });
-    }
-  });
-});
+    const { title, body } = req.body ?? {};
+    if (!title || !body) return res.status(400).send("title and body are required.");
 
-app.delete("/users/:id", (req, res) => {
-  const id = req.params["id"];
-  userService.removeUser(id).then((result) => {
-    if (result.deletedCount === 0) {
-      res.status(404).send("Resource not found.");
-    } else {
-      res.status(204).send();
-    }
-  });
-});
-
-app.post("/users", (req, res) => {
-  const user = req.body;
-  userService.addUser(user).then((savedUser) => {
-    if (savedUser) res.status(201).send(savedUser);
-    else res.status(500).end();
-  });
+    const saved = await journalService.createEntry({ title, body });
+    res.status(201).json(saved);
+  } catch (error) {
+    console.error("POST /entries error:", error);
+    console.error(error?.stack);
+    res.status(500).send("An error occurred in the server.");
+  }
 });
 
 app.listen(port, () => {
-  console.log(
-    `Example app listening at http://localhost:${port}`
-  );
+  console.log(`Example app listening at http://localhost:${port}`);
 });
