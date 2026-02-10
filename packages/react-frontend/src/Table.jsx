@@ -2,27 +2,19 @@ function TableHeader() {
   return (
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Job</th>
-        <th>ID</th>
-        <th>Remove</th>
+        <th>Title</th>
+        <th>Body</th>
       </tr>
     </thead>
   );
 }
 
 function TableBody(props) {
-  const rows = props.characterData.map((row, index) => {
+  const rows = props.journalData.map((row, index) => {
     return (
       <tr key={index}>
-        <td>{row.name}</td>
-        <td>{row.job}</td>
-        <td>{row.id}</td>
-        <td>
-          <button onClick={() => props.removeCharacter(index)}>
-            Delete
-          </button>
-        </td>
+        <td>{row.title}</td>
+        <td>{row.body}</td>
       </tr>
     );
   });
@@ -33,10 +25,7 @@ function Table(props) {
   return (
     <table>
       <TableHeader />
-      <TableBody
-        characterData={props.characterData}
-        removeCharacter={props.removeCharacter}
-      />
+      <TableBody journalData={props.journalData} />
     </table>
   );
 }
