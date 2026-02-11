@@ -8,4 +8,7 @@ const journalEntrySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("JournalEntry", journalEntrySchema);
+export default mongoose.model(
+  "JournalEntry",
+  journalEntrySchema
+);
