@@ -38,7 +38,7 @@ function MyApp() {
   useEffect(() => {
     fetchEntries()
       .then((res) => res.json())
-      .then((json) => setEntries(json["entries_list"]))
+      .then((json) => setEntries(json["entries"]))
       .catch((error) => {
         console.log(error);
       });
