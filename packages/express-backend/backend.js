@@ -43,9 +43,15 @@ app.post("/entries", async (req, res) => {
     console.log("body:", req.body);
 
     const { title, body } = req.body ?? {};
-    if (!title || !body) return res.status(400).send("title and body are required.");
+    if (!title || !body)
+      return res
+        .status(400)
+        .send("title and body are required.");
 
-    const saved = await journalService.createEntry({ title, body });
+    const saved = await journalService.createEntry({
+      title,
+      body
+    });
     res.status(201).json(saved);
   } catch (error) {
     console.error("POST /entries error:", error);
@@ -55,5 +61,7 @@ app.post("/entries", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(
+    `Example app listening at http://localhost:${port}`
+  );
 });
