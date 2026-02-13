@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import * as journalService from "./services/journal-service.js";
 
+//to run back end: npm run dev 
+
 dotenv.config();
 
 const { MONGO_CONNECTION_STRING } = process.env;
