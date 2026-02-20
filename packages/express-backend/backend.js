@@ -4,9 +4,14 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import * as journalService from "./services/journal-service.js";
 
-//to run back end: npm run dev 
-
+//to run back end: npm run dev
+//alt way to run: npm run start --workspace=express-backend
 dotenv.config();
+
+console.log(
+  "MONGO_CONNECTION_STRING =",
+  process.env.MONGO_CONNECTION_STRING
+);
 
 const { MONGO_CONNECTION_STRING } = process.env;
 
