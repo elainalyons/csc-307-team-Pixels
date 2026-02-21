@@ -1,39 +1,17 @@
 // src/MyApp.jsx
 // can start frontend by running npm start from root directory of project
 import React, { useState, useEffect } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import Calendar from "./calendar";
 import Table from "./Table";
-// import Form from "./Form";
 
 function MyApp() {
   const [entries, setEntries] = useState([]);
-
-  // function updateList(person) {
-  //   postUser(person)
-  //     .then((res) => {
-  //       if (res.status === 201) return res.json();
-  //     })
-  //     .then((json) => setEntries([...entries, json]))
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }
 
   function fetchEntries() {
     const promise = fetch("http://localhost:8000/entries");
     return promise;
   }
-
-  // function postUser(entry) {
-  //   const promise = fetch("http://localhost:8000/entries", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify(entry)
-  //   });
-
-  //   return promise;
-  // }
 
   useEffect(() => {
     fetchEntries()
@@ -46,7 +24,17 @@ function MyApp() {
 
   return (
     <div className="container">
-      <Table journalData={entries} />
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/calendar">Calendar</Link>
+      </nav>
+
+      <Routes>
+        <Route
+          path="/" element={<Table journalData={entries} />}
+        />
+        <Route path="/calendar" element={<Calendar CalendarData = {entries} />} />
+      </Routes>
     </div>
   );
 }

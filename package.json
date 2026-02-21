@@ -16,5 +16,8 @@
   "devDependencies": {
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1"
+  },
+  "dependencies": {
+    "react-router-dom": "^7.13.0"
   }
 }
