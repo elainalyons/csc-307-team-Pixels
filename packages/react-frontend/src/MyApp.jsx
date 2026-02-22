@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Table from "./Table";
 import NewEntryForm from "./NewEntryForm";
+import "./MyApp.css";
 
 function MyApp() {
   const [entries, setEntries] = useState([]);
@@ -46,8 +47,14 @@ function MyApp() {
 
   return (
     <div className="container">
-      <NewEntryForm handleSubmit={updateList} />
-      <Table journalData={entries} />
+      <div className="left-panel">
+        <NewEntryForm handleSubmit={updateList} />
+        <h1>Previous Journal Entries</h1>
+        <Table journalData={entries} />
+      </div>
+      <div className="right-panel">
+        {/* Optional later: stats, filters, mood chart, etc. */}
+      </div>
     </div>
   );
 }

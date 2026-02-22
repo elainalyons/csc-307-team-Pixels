@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./NewEntryForm.css";
 
 function NewEntryForm(props) {
   const [entry, setEntry] = useState({
@@ -19,7 +20,7 @@ function NewEntryForm(props) {
   }
 
   return (
-    <form>
+    <form className="entry-form">
       <label htmlFor="title">Title</label>
       <input
         type="text"
@@ -30,8 +31,7 @@ function NewEntryForm(props) {
         placeholder="Enter a title..."
       />
       <label htmlFor="body">Body</label>
-      <input
-        type="text"
+      <textarea
         name="body"
         id="body"
         value={entry.body}
