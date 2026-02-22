@@ -4,19 +4,35 @@ import "./NewEntryForm.css";
 function NewEntryForm(props) {
   const [entry, setEntry] = useState({
     title: "",
-    body: ""
+    body: "",
+    date: new Date()
   });
 
   function handleChange(event) {
     const { name, value } = event.target;
     if (name === "body")
-      setEntry({ title: entry["title"], body: value });
-    else setEntry({ title: value, body: entry["body"] });
+      setEntry({
+        title: entry["title"],
+        body: value,
+        date: entry["date"]
+      });
+    else if (name === "title")
+      setEntry({
+        title: value,
+        body: entry["body"],
+        date: entry["date"]
+      });
+    else
+      setEntry({
+        title: entry["title"],
+        body: entry["body"],
+        date: value
+      });
   }
 
   function submitEntry() {
     props.handleSubmit(entry);
-    setEntry({ title: "", body: "" });
+    setEntry({ title: "", body: "", date: new Date() });
   }
 
   return (
@@ -30,6 +46,7 @@ function NewEntryForm(props) {
         onChange={handleChange}
         placeholder="Enter a title..."
       />
+
       <label htmlFor="body">Body</label>
       <textarea
         name="body"
@@ -38,6 +55,16 @@ function NewEntryForm(props) {
         onChange={handleChange}
         placeholder="Write your journal entry here"
       />
+
+      <label htmlFor="date">Date (optional)</label>
+      <input
+        type="date"
+        name="date"
+        id="date"
+        value={entry.date}
+        onChange={handleChange}
+      />
+
       <input
         type="button"
         value="Submit"

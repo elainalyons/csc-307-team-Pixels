@@ -13,7 +13,15 @@ function MyApp() {
       .then((res) => {
         if (res.status === 201) return res.json();
       })
-      .then((json) => setEntries([...entries, json]))
+      .then((json) => {
+        setEntries((prevEntries) =>
+          [...prevEntries, json].sort(
+            (a, b) =>
+              new Date(b.date || b.createdAt) -
+              new Date(a.date || a.createdAt)
+          )
+        );
+      })
       .catch((error) => {
         console.log(error);
       });

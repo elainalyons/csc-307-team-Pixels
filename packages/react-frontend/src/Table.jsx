@@ -4,6 +4,7 @@ function TableHeader() {
       <tr>
         <th>Title</th>
         <th>Body</th>
+        <th>Date</th>
       </tr>
     </thead>
   );
@@ -15,6 +16,7 @@ function TableBody(props) {
       <tr key={index}>
         <td>{row.title}</td>
         <td>{row.body}</td>
+        <td>{row.date}</td>
       </tr>
     );
   });
