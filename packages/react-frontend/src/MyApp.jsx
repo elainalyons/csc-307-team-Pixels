@@ -55,25 +55,6 @@ function MyApp() {
       });
   }, []);
 
-  //FAKE Data for FAKE backend response Below since Mongo isnt working
-  /*   useEffect(() => {
-    setEntries([
-      {
-        _id: "test1",
-        title: "Test Entry",
-        body: "Hello from fake data",
-        createdAt: "2026-02-18T00:00:00.000Z"
-      },
-      {
-        _id: "test2",
-        title: "Second Entry",
-        body: "Another one",
-        createdAt: new Date().toISOString()
-      }
-    ]);
-  }, []); */
-  //^^REMOVE once mongo connection works
-
   return (
     <div className="container">
       <nav>
@@ -83,18 +64,25 @@ function MyApp() {
 
       <Routes>
         <Route
-          path="/" element={<Table journalData={entries} />}
+          path="/"
+          element={
+            <div>
+              <div className="left-panel">
+                <NewEntryForm handleSubmit={updateList} />
+                <h1>Previous Journal Entries</h1>
+                <Table journalData={entries.slice(0, 3)} />
+              </div>
+              <div className="right-panel">
+                {/* Optional later: stats, filters, mood chart, etc. */}
+              </div>
+            </div>
+          }
         />
-        <Route path="/calendar" element={<Calendar CalendarData = {entries} />} />
+        <Route
+          path="/calendar"
+          element={<Calendar CalendarData={entries} />}
+        />
       </Routes>
-      <div className="left-panel">
-        <NewEntryForm handleSubmit={updateList} />
-        <h1>Previous Journal Entries</h1>
-        <Table journalData={entries} />
-      </div>
-      <div className="right-panel">
-        {/* Optional later: stats, filters, mood chart, etc. */}
-      </div>
     </div>
   );
 }

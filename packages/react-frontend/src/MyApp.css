@@ -7,9 +7,9 @@
 
 /* Left side takes most of the screen */
 .left-panel {
-  flex: 3; /* takes ~75% */
+  flex: 0 0 50%; /* don't grow, don't shrink, width = 50% */
   padding: 20px;
-  overflow-y: auto; /* scroll if content is long */
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
