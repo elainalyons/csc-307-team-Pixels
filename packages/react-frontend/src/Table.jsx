@@ -2,12 +2,26 @@ function TableHeader() {
   return (
     <thead>
       <tr>
+        <th>Date</th>
         <th>Title</th>
         <th>Body</th>
+        <th>Date</th>
       </tr>
     </thead>
   );
 }
+
+const formatDate = (value) => {
+  const d = new Date(value);
+  /*   return value && !isNaN(d) */
+  return value && !isNaN(d)
+    ? d.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit"
+      })
+    : "";
+};
 
 function TableBody(props) {
   const rows = props.journalData.map((row, index) => {
@@ -15,6 +29,7 @@ function TableBody(props) {
       <tr key={index}>
         <td>{row.title}</td>
         <td>{row.body}</td>
+        <td>{row.date}</td>
       </tr>
     );
   });
