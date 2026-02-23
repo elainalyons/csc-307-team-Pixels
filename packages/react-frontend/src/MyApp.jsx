@@ -1,6 +1,8 @@
 // src/MyApp.jsx
 // can start frontend by running npm start from root directory of project
 import React, { useState, useEffect } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import Calendar from "./calendar";
 import Table from "./Table";
 import NewEntryForm from "./NewEntryForm";
 import "./MyApp.css";
@@ -74,6 +76,17 @@ function MyApp() {
 
   return (
     <div className="container">
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/calendar">Calendar</Link>
+      </nav>
+
+      <Routes>
+        <Route
+          path="/" element={<Table journalData={entries} />}
+        />
+        <Route path="/calendar" element={<Calendar CalendarData = {entries} />} />
+      </Routes>
       <div className="left-panel">
         <NewEntryForm handleSubmit={updateList} />
         <h1>Previous Journal Entries</h1>
