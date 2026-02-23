@@ -53,6 +53,25 @@ function MyApp() {
       });
   }, []);
 
+  //FAKE Data for FAKE backend response Below since Mongo isnt working
+  /*   useEffect(() => {
+    setEntries([
+      {
+        _id: "test1",
+        title: "Test Entry",
+        body: "Hello from fake data",
+        createdAt: "2026-02-18T00:00:00.000Z"
+      },
+      {
+        _id: "test2",
+        title: "Second Entry",
+        body: "Another one",
+        createdAt: new Date().toISOString()
+      }
+    ]);
+  }, []); */
+  //^^REMOVE once mongo connection works
+
   return (
     <div className="container">
       <div className="left-panel">
