@@ -7,7 +7,8 @@
 
 /* Left side takes most of the screen */
 .left-panel {
-  flex: 0 0 50%; /* don't grow, don't shrink, width = 50% */
+  width: 1000px; /* fixed width */
+  flex-shrink: 0; /* prevents shrinking */
   padding: 20px;
   overflow-y: auto;
   display: flex;
