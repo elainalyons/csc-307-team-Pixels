@@ -5,6 +5,7 @@ function TableHeader() {
         <th>Date</th>
         <th>Title</th>
         <th>Body</th>
+        <th>Date</th>
       </tr>
     </thead>
   );
@@ -23,13 +24,15 @@ const formatDate = (value) => {
 };
 
 function TableBody(props) {
-  const rows = props.journalData.map((row) => (
-    <tr key={row._id ?? `${row.title} - ${row.createdAt}`}>
-      <td>{formatDate(row.createdAt)}</td>
-      <td>{row.title}</td>
-      <td>{row.body}</td>
-    </tr>
-  ));
+  const rows = props.journalData.map((row, index) => {
+    return (
+      <tr key={index}>
+        <td>{row.title}</td>
+        <td>{row.body}</td>
+        <td>{row.date}</td>
+      </tr>
+    );
+  });
   return <tbody>{rows}</tbody>;
 }
 

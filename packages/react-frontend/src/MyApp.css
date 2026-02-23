@@ -1,0 +1,21 @@
+/* Whole page */
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+/* Left side takes most of the screen */
+.left-panel {
+  flex: 3; /* takes ~75% */
+  padding: 20px;
+  overflow-y: auto; /* scroll if content is long */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Optional right side */
+.right-panel {
+  display: none;
+}

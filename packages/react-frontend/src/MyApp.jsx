@@ -2,38 +2,47 @@
 // can start frontend by running npm start from root directory of project
 import React, { useState, useEffect } from "react";
 import Table from "./Table";
-// import Form from "./Form";
+import NewEntryForm from "./NewEntryForm";
+import "./MyApp.css";
 
 function MyApp() {
   const [entries, setEntries] = useState([]);
 
-  // function updateList(person) {
-  //   postUser(person)
-  //     .then((res) => {
-  //       if (res.status === 201) return res.json();
-  //     })
-  //     .then((json) => setEntries([...entries, json]))
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }
+  function updateList(entry) {
+    postEntry(entry)
+      .then((res) => {
+        if (res.status === 201) return res.json();
+      })
+      .then((json) => {
+        setEntries((prevEntries) =>
+          [...prevEntries, json].sort(
+            (a, b) =>
+              new Date(b.date || b.createdAt) -
+              new Date(a.date || a.createdAt)
+          )
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   function fetchEntries() {
     const promise = fetch("http://localhost:8000/entries");
     return promise;
   }
 
-  // function postUser(entry) {
-  //   const promise = fetch("http://localhost:8000/entries", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify(entry)
-  //   });
+  function postEntry(entry) {
+    const promise = fetch("http://localhost:8000/entries", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(entry)
+    });
 
-  //   return promise;
-  // }
+    return promise;
+  }
 
   useEffect(() => {
     fetchEntries()
@@ -65,7 +74,14 @@ function MyApp() {
 
   return (
     <div className="container">
-      <Table journalData={entries} />
+      <div className="left-panel">
+        <NewEntryForm handleSubmit={updateList} />
+        <h1>Previous Journal Entries</h1>
+        <Table journalData={entries} />
+      </div>
+      <div className="right-panel">
+        {/* Optional later: stats, filters, mood chart, etc. */}
+      </div>
     </div>
   );
 }
