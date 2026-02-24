@@ -111,8 +111,13 @@ function MyApp() {
   return (
     <div className="container">
       <nav>
-        <Link to="/">Home</Link>
-        <Link to="/calendar">Calendar</Link>
+        <div className="logo">Reflekt⭐️</div>
+
+        <div className="nav-links">
+          <Link to="/">Home</Link>
+          <Link to="/calendar">Calendar</Link>
+          <Link to="/entries">All Entries</Link>
+        </div>
       </nav>
 
       <Routes>
@@ -128,6 +133,21 @@ function MyApp() {
                   onDelete={handleDelete}
                   onUpdate={handleUpdate}
                 />
+                <Link
+                  to="/entries"
+                  style={{
+                    display: "inline-block",
+                    marginTop: 12,
+                    padding: "10px 16px",
+                    background: "#ff4fa3",
+                    color: "white",
+                    borderRadius: 8,
+                    textDecoration: "none",
+                    fontWeight: 600
+                  }}
+                >
+                  View All Entries
+                </Link>
               </div>
               <div className="right-panel">
                 {/* Optional later: stats, filters, mood chart, etc. */}
@@ -139,7 +159,21 @@ function MyApp() {
           path="/calendar"
           element={<Calendar CalendarData={entries} />}
         />
+        <Route
+          path="/entries"
+          element={
+            <div className="left-panel">
+              <h1>All Journal Entries</h1>
+              <Table
+                journalData={entries}
+                onDelete={handleDelete}
+                onUpdate={handleUpdate}
+              />
+            </div>
+          }
+        />
       </Routes>
+
     </div>
   );
 }
