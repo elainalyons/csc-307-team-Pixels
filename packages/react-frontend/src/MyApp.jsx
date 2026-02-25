@@ -123,7 +123,7 @@ function MyApp() {
 
         <div className="nav-links">
           <Link to="/">Login</Link>
-          <Link to="/Home">Home</Link>
+          <Link to="/home">Home</Link>
           <Link to="/calendar">Calendar</Link>
           <Link to="/entries">All Entries</Link>
         </div>
@@ -131,11 +131,11 @@ function MyApp() {
 
       <Routes>
         <Route
-          path="/login"
+          path="/"
           element={<Login handleSubmit={loginUser} />}
         />
         <Route
-          path="/Home"
+          path="/home"
           element={
             <div>
               <div className="left-panel">
