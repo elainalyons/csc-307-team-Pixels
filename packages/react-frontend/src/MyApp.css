@@ -20,3 +20,38 @@
 .right-panel {
   display: none;
 }
+
+/* --- NAV BAR --- */
+
+nav {
+  display: flex;
+  gap: 24px;
+  padding: 18px 28px;
+  border-bottom: 1px solid #e5e5e5;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #444;
+  font-size: 18px;
+}
+
+nav a:hover {
+  color: #ff4fa3;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  margin-right: auto;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+}

@@ -71,3 +71,48 @@ app.listen(port, () => {
     `Example app listening at http://localhost:${port}`
   );
 });
+
+// DELETE /entries/:id
+app.delete("/entries/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await journalService.deleteEntryById(id);
+
+    if (!deleted) {
+      return res.status(404).send("Entry not found.");
+    }
+
+    // either return the deleted doc or just a success message
+    return res.status(200).json({ message: "Entry deleted.", id });
+  } catch (error) {
+    console.error("DELETE /entries/:id error:", error);
+    return res.status(500).send("An error occurred in the server.");
+  }
+});
+
+// PUT /entries/:id  (edit an entry)
+app.put("/entries/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, body, date } = req.body ?? {};
+
+    // Optional: basic validation (title/body required for your schema)
+    if (!title || !body) {
+      return res.status(400).send("title and body are required.");
+    }
+
+    const updated = await journalService.updateEntryById(id, {
+      title,
+      body,
+      date
+    });
+
+    if (!updated) return res.status(404).send("Entry not found.");
+
+    return res.status(200).json(updated);
+  } catch (error) {
+    console.error("PUT /entries/:id error:", error);
+    return res.status(500).send("An error occurred in the server.");
+  }
+});
