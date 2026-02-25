@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
+import mongoose from "mongoose";  
 import * as journalService from "./services/journal-service.js";
+import {authenticateUser, loginUser, registerUser} from "./auth.js"
 
 //to run back end: npm run dev
 //alt way to run: npm run start --workspace=express-backend
