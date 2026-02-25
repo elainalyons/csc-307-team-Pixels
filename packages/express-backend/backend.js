@@ -116,3 +116,14 @@ app.put("/entries/:id", async (req, res) => {
     return res.status(500).send("An error occurred in the server.");
   }
 });
+
+
+app.post("/users", authenticateUser, (req, res) => {
+  const userToAdd = req.body;
+  Users.addUser(userToAdd).then((result) =>
+    res.status(201).send(result)
+  );
+  });
+
+app.post("/signup", registerUser);
+app.post("/login", loginUser);
