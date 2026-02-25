@@ -99,10 +99,18 @@ function MyApp() {
       .catch((err) => console.log(err));
   }
 
-  useEffect(() => {
-    fetchEntries()
-      .then((res) => res.json())
-      .then((json) => setEntries(json["entries"]))
+    useEffect(() => {
+    fetchUsers()
+      .then((res) =>
+        res.status === 200 ? res.json() : undefined
+      )
+      .then((json) => {
+        if (json) {
+          setCharacters(json["users_list"]);
+        } else {
+          setCharacters(null);
+        }
+      })
       .catch((error) => {
         console.log(error);
       });
@@ -114,7 +122,8 @@ function MyApp() {
         <div className="logo">Reflekt⭐️</div>
 
         <div className="nav-links">
-          <Link to="/">Home</Link>
+          <Link to="/">Login</Link>
+          <Link to="/Home">Home</Link>
           <Link to="/calendar">Calendar</Link>
           <Link to="/entries">All Entries</Link>
         </div>
@@ -122,7 +131,11 @@ function MyApp() {
 
       <Routes>
         <Route
-          path="/"
+          path="/login"
+          element={<Login handleSubmit={loginUser} />}
+        />
+        <Route
+          path="/Home"
           element={
             <div>
               <div className="left-panel">
