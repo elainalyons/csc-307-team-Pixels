@@ -6,7 +6,9 @@ function TableHeader() {
         <th>Title</th>
         <th>Body</th>
         <th>Date</th>
-        <th style={{ width: "90px", textAlign: "right" }}>Actions</th>
+        <th style={{ width: "90px", textAlign: "right" }}>
+          Actions
+        </th>
       </tr>
     </thead>
   );
@@ -14,7 +16,6 @@ function TableHeader() {
 
 const formatDate = (value) => {
   const d = new Date(value);
-  /*   return value && !isNaN(d) */
   return value && !isNaN(d)
     ? d.toLocaleDateString("en-US", {
         year: "numeric",
@@ -42,7 +43,11 @@ function TableBody(props) {
   
   const [openMenuId, setOpenMenuId] = useState(null);
   const [editingId, setEditingId] = useState(null);
-  const [draft, setDraft] = useState({ title: "", body: "", date: "" });
+  const [draft, setDraft] = useState({
+    title: "",
+    body: "",
+    date: ""
+  });
 
   const startEdit = (entry) => {
     setEditingId(entry._id);
@@ -71,13 +76,24 @@ function TableBody(props) {
 
   const rows = props.journalData.map((row) => {
     return (
-      <tr key={row._id}>
+      <tr
+        key={row._id}
+        onClick={() => {
+          if (editingId) return;
+          props.onRowClick?.(row._id);
+        }}
+        style={{
+          cursor: props.onRowClick ? "pointer" : "default"
+        }}>
         <td>
           {editingId === row._id ? (
             <input
               value={draft.title}
               onChange={(e) =>
-                setDraft((d) => ({ ...d, title: e.target.value }))
+                setDraft((d) => ({
+                  ...d,
+                  title: e.target.value
+                }))
               }
               placeholder="Title"
             />
@@ -85,13 +101,15 @@ function TableBody(props) {
             row.title
           )}
         </td>
-
         <td>
           {editingId === row._id ? (
             <textarea
               value={draft.body}
               onChange={(e) =>
-                setDraft((d) => ({ ...d, body: e.target.value }))
+                setDraft((d) => ({
+                  ...d,
+                  body: e.target.value
+                }))
               }
               placeholder="Body"
               rows={2}
@@ -100,35 +118,45 @@ function TableBody(props) {
             row.body
           )}
         </td>
-
         <td>
           {editingId === row._id ? (
             <input
               type="date"
               value={draft.date}
               onChange={(e) =>
-                setDraft((d) => ({ ...d, date: e.target.value }))
+                setDraft((d) => ({
+                  ...d,
+                  date: e.target.value
+                }))
               }
             />
           ) : (
             formatDate(row.date || row.createdAt)
           )}
         </td>
-
-        <td style={{ textAlign: "right", position: "relative" }}>
+        <td
+          style={{ textAlign: "right", position: "relative" }}>
           {editingId === row._id ? (
             <>
-              <button onClick={() => saveEdit(row._id)}>Save</button>
-              <button onClick={cancelEdit} style={{ marginLeft: 8 }}>
+              <button onClick={() => saveEdit(row._id)}>
+                Save
+              </button>
+              <button
+                onClick={cancelEdit}
+                style={{ marginLeft: 8 }}>
                 Cancel
               </button>
             </>
           ) : (
             <>
               <button
-                onClick={() =>
-                  setOpenMenuId(openMenuId === row._id ? null : row._id)
-                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setOpenMenuId(
+                    openMenuId === row._id ? null : row._id
+                  );
+                }}
                 aria-label="Actions"
                 title="Actions"
                 style={{
@@ -144,8 +172,7 @@ function TableBody(props) {
                   fontSize: 18,
                   fontWeight: "bold",
                   lineHeight: "0"
-                }}
-              >
+                }}>
                 ⋯
               </button>
               {openMenuId === row._id && (
@@ -163,8 +190,7 @@ function TableBody(props) {
                     zIndex: 10,
                     minWidth: 140,
                     boxShadow: "0 6px 18px rgba(0,0,0,0.15)"
-                  }}
-                >
+                  }}>
                   <button
                     type="button"
                     onClick={(e) => {
@@ -181,8 +207,7 @@ function TableBody(props) {
                       borderRadius: 6,
                       cursor: "pointer",
                       fontWeight: 600
-                    }}
-                  >
+                    }}>
                     Edit
                   </button>
                   <button
@@ -201,8 +226,7 @@ function TableBody(props) {
                       borderRadius: 6,
                       cursor: "pointer",
                       fontWeight: 600
-                    }}
-                  >
+                    }}>
                     Delete
                   </button>
                 </div>
@@ -225,6 +249,7 @@ function Table(props) {
         journalData={props.journalData}
         onDelete={props.onDelete}
         onUpdate={props.onUpdate}
+        onRowClick={props.onRowClick}
       />
     </table>
   );
