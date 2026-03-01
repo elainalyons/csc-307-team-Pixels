@@ -24,7 +24,7 @@ export default function EntryModal({ entry, onClose }) {
           width: "min(900px, 95vw)",
           maxHeight: "85vh",
           overflow: "auto",
-          background: "white",
+          background: "light-dark(#ffffff, #414141)",
           borderRadius: 12,
           padding: 18,
           boxShadow: "0 10px 30px rgba(0,0,0,0.25)"

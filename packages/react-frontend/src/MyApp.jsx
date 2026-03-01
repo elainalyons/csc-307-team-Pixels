@@ -122,7 +122,7 @@ function MyApp() {
   }, []);
 
   return (
-    <div className="container">
+    <div className="app-shell">
       <nav>
         <div className="logo">Reflekt⭐️</div>
 
@@ -137,7 +137,7 @@ function MyApp() {
         <Route
           path="/"
           element={
-            <div>
+            <div className="page-content">
               <div className="left-panel">
                 <NewEntryForm handleSubmit={updateList} />
                 <h1>Previous Journal Entries</h1>
