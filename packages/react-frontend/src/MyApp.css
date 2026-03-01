@@ -2,10 +2,11 @@
 .container {
   display: flex;
   height: 100vh;
-  background-color: #f0f2f5;
+  /*   background-color: #f0f2f5;
+ */
 }
 
-/* Left side takes most of the screen */
+/* Left side takes most of the screen - Prev Journal Entries*/
 .left-panel {
   width: 1000px; /* fixed width */
   flex-shrink: 0; /* prevents shrinking */
@@ -27,8 +28,8 @@ nav {
   display: flex;
   gap: 24px;
   padding: 18px 28px;
-  border-bottom: 1px solid #e5e5e5;
-  background: white;
+  /*border-bottom: 1px solid #e5e5e5;  //Create the random line in cutting through prev. journal
+  background: white; // Weird Left side whit bar*/
   position: sticky;
   top: 0;
   z-index: 100;
@@ -37,7 +38,7 @@ nav {
 nav a {
   text-decoration: none;
   font-weight: 600;
-  color: #444;
+  color: light-dark(#797979, #ffffff);
   font-size: 18px;
 }
 

@@ -20,6 +20,10 @@ export async function getAllEntries() {
   ]);
 }
 
+export async function getEntryById(id) {
+  return JournalEntry.findById(id);
+}
+
 export async function deleteEntryById(id) {
   return JournalEntry.findByIdAndDelete(id);
 }
@@ -27,7 +31,8 @@ export async function deleteEntryById(id) {
 export async function updateEntryById(id, updates) {
   // Only allow fields we expect (keeps it safe)
   const allowed = {};
-  if (updates.title !== undefined) allowed.title = updates.title;
+  if (updates.title !== undefined)
+    allowed.title = updates.title;
   if (updates.body !== undefined) allowed.body = updates.body;
   if (updates.date !== undefined) allowed.date = updates.date;
 

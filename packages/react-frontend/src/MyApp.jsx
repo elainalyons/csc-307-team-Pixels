@@ -1,14 +1,27 @@
 // src/MyApp.jsx
 // can start frontend by running npm start from root directory of project
 import React, { useState, useEffect } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link,
+  useNavigate
+} from "react-router-dom";
 import Calendar from "./calendar";
 import Table from "./Table";
 import NewEntryForm from "./NewEntryForm";
+import EntryModal from "./EntryModal";
+import EntryDetailsPage from "./EntryDetailsPage";
 import "./MyApp.css";
 
 function MyApp() {
   const [entries, setEntries] = useState([]);
+  const navigate = useNavigate();
+
+  const [selectedEntryId, setSelectedEntryId] = useState(null);
+  const selectedEntry = entries.find(
+    (e) => e._id === selectedEntryId
+  );
 
   function updateList(entry) {
     postEntry(entry)
@@ -132,6 +145,7 @@ function MyApp() {
                   journalData={entries.slice(0, 3)}
                   onDelete={handleDelete}
                   onUpdate={handleUpdate}
+                  onRowClick={(id) => setSelectedEntryId(id)}
                 />
                 <Link
                   to="/entries"
@@ -144,10 +158,15 @@ function MyApp() {
                     borderRadius: 8,
                     textDecoration: "none",
                     fontWeight: 600
-                  }}
-                >
+                  }}>
                   View All Entries
                 </Link>
+                {selectedEntryId && (
+                  <EntryModal
+                    entry={selectedEntry}
+                    onClose={() => setSelectedEntryId(null)}
+                  />
+                )}
               </div>
               <div className="right-panel">
                 {/* Optional later: stats, filters, mood chart, etc. */}
@@ -168,12 +187,16 @@ function MyApp() {
                 journalData={entries}
                 onDelete={handleDelete}
                 onUpdate={handleUpdate}
+                onRowClick={(id) => navigate(`/entries/${id}`)}
               />
             </div>
           }
         />
+        <Route
+          path="/entries/:id"
+          element={<EntryDetailsPage />}
+        />
       </Routes>
-
     </div>
   );
 }
