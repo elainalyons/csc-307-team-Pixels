@@ -37,6 +37,10 @@ const toDateInputValue = (value) => {
 };
 
 function TableBody(props) {
+  if (props.characterData === null) {
+    return <caption>Data Unavailable</caption>;
+  }
+  
   const [openMenuId, setOpenMenuId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState({

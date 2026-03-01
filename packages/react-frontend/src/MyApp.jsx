@@ -13,9 +13,16 @@ import NewEntryForm from "./NewEntryForm";
 import EntryModal from "./EntryModal";
 import EntryDetailsPage from "./EntryDetailsPage";
 import "./MyApp.css";
+import Login from "./Login";
+
+
 
 function MyApp() {
   const [entries, setEntries] = useState([]);
+  const INVALID_TOKEN = "INVALID_TOKEN";
+  const [token, setToken] = useState(INVALID_TOKEN);
+  const [message, setMessage] = useState("");
+  const API_PREFIX = "http://localhost:8000";
   const navigate = useNavigate();
 
   const [selectedEntryId, setSelectedEntryId] = useState(null);
@@ -43,25 +50,31 @@ function MyApp() {
   }
 
   function fetchEntries() {
-    const promise = fetch("http://localhost:8000/entries");
-    return promise;
+    return fetch(`${API_PREFIX}/entries`, {
+      headers: addAuthHeader(),
+    });
   }
 
   function postEntry(entry) {
-    const promise = fetch("http://localhost:8000/entries", {
+    return fetch(`${API_PREFIX}/entries`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(entry)
+      headers: addAuthHeader({ "Content-Type": "application/json" }),
+      body: JSON.stringify(entry),
     });
-
-    return promise;
   }
 
   function deleteEntry(id) {
-    return fetch(`http://localhost:8000/entries/${id}`, {
-      method: "DELETE"
+    return fetch(`${API_PREFIX}/entries/${id}`, {
+      method: "DELETE",
+      headers: addAuthHeader(),
+    });
+  }
+
+  function putEntry(id, updates) {
+    return fetch(`${API_PREFIX}/entries/${id}`, {
+      method: "PUT",
+      headers: addAuthHeader({ "Content-Type": "application/json" }),
+      body: JSON.stringify(updates),
     });
   }
 
@@ -81,13 +94,73 @@ function MyApp() {
       .catch((error) => console.log(error));
   }
 
-  function putEntry(id, updates) {
-    return fetch(`http://localhost:8000/entries/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates)
-    });
+
+  function loginUser(creds) {
+    const promise = fetch(`${API_PREFIX}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(creds)
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          response
+            .json()
+            .then((payload) => setToken(payload.token));
+          setMessage(`Login successful; auth token saved`);
+        } else {
+          setMessage(
+            `Login Error ${response.status}: ${response.data}`
+          );
+        }
+      })
+      .catch((error) => {
+        setMessage(`Login Error: ${error}`);
+      });
+
+    return promise;
   }
+
+  function signupUser(creds) {
+    return fetch(`${API_PREFIX}/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(creds),
+    })
+      .then(async (response) => {
+        if (response.status === 201) {
+          const payload = await response.json();
+          setToken(payload.token);
+          setMessage(`Signup successful; auth token saved`);
+        } else {
+          const txt = await response.text();
+          setMessage(`Signup Error ${response.status}: ${txt}`);
+        }
+      })
+      .catch((error) => setMessage(`Signup Error: ${error}`));
+  }
+
+  function addAuthHeader(otherHeaders = {}) {
+    if (token === INVALID_TOKEN) {
+      return otherHeaders;
+    } else {
+      return {
+        ...otherHeaders,
+        Authorization: `Bearer ${token}`
+      };
+    }
+  }
+
+  function fetchUsers() {
+    const promise = fetch(`${API_PREFIX}/users`, {
+      headers: addAuthHeader()
+    });
+
+    return promise;
+  }
+
+
 
   function handleUpdate(id, updates) {
     putEntry(id, updates)
@@ -114,12 +187,13 @@ function MyApp() {
 
   useEffect(() => {
     fetchEntries()
-      .then((res) => res.json())
-      .then((json) => setEntries(json["entries"]))
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+      .then((res) => (res.status === 200 ? res.json() : undefined))
+      .then((json) => {
+        if (json) setEntries(json.entries);
+        else setEntries(null); // optional: show "Data Unavailable"
+      })
+      .catch((error) => console.log(error));
+  }, [token]);
 
   return (
     <div className="app-shell">
@@ -127,7 +201,8 @@ function MyApp() {
         <div className="logo">Reflekt⭐️</div>
 
         <div className="nav-links">
-          <Link to="/">Home</Link>
+          <Link to="/">Login</Link>
+          <Link to="/home">Home</Link>
           <Link to="/calendar">Calendar</Link>
           <Link to="/entries">All Entries</Link>
         </div>
@@ -136,6 +211,11 @@ function MyApp() {
       <Routes>
         <Route
           path="/"
+          element={<Login handleSubmit={loginUser} />}
+        />
+        <Route path="/signup" element={<Login handleSubmit={signupUser} buttonLabel="Sign Up" />} />
+        <Route
+          path="/home"
           element={
             <div className="page-content">
               <div className="left-panel">
