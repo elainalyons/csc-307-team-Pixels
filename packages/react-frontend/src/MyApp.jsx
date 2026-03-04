@@ -49,6 +49,7 @@ function MyApp() {
     });
   }
 
+
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
       method: "POST",
@@ -139,7 +140,7 @@ async function signupUser(creds) {
 
     setToken(body.token);
     setMessage(`Signup successful for user: ${creds.username}`);
-    navigate("\home");
+    navigate("/home");
     return true;
   } catch (err) {
     setMessage(`Signup Error: ${err.message}`);
@@ -183,6 +184,7 @@ async function signupUser(creds) {
 
 //only get entries when token is valid 
 useEffect(() => {
+
   if (token === INVALID_TOKEN) {
     setEntries([]); // clear entries when logged out
     return;

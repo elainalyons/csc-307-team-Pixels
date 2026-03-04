@@ -36,12 +36,14 @@ const toDateInputValue = (value) => {
 };
 
 function TableBody(props) {
-  if (props.characterData === null) {
-    return <caption>Data Unavailable</caption>;
-  }
   const [openMenuId, setOpenMenuId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState({ title: "", body: "", date: "" });
+  
+  if (props.characterData === null) {
+    return <caption>Data Unavailable</caption>;
+  }
+
 
   const startEdit = (entry) => {
     setEditingId(entry._id);
