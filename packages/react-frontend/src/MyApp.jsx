@@ -72,21 +72,20 @@ function MyApp() {
     });
   }
 
-  function handleDelete(id) {
-    // optional confirm pop-up
-    const ok = window.confirm(
-      "Delete this journal entry? This cannot be undone."
-    );
-    if (!ok) return;
+function handleDelete(id) {
+  const ok = window.confirm("Delete this journal entry? This cannot be undone.");
+  if (!ok) return;
 
-    deleteEntry(id)
-      .then((res) => {
-        if (!res.ok) throw new Error("Delete failed");
-        // Remove from state so UI updates instantly
-        setEntries((prev) => prev.filter((e) => e._id !== id));
-      })
-      .catch((error) => console.log(error));
-  }
+  deleteEntry(id)
+    .then((res) => {
+      if (!res.ok) throw new Error("Delete failed");
+      setEntries((prev) => prev.filter((e) => e._id !== id));
+    })
+    .catch((error) => {
+      console.log(error);
+      setMessage("Delete failed");
+    });
+}
 
 
 async function loginUser(creds) {

@@ -105,6 +105,7 @@ app.get("/entries/:id", authenticateUser, async (req, res) => {
 app.delete("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
+    const owner = req.user.username;
 
     const deleted = await journalService.deleteEntryByIdForOwner(id,owner);
 
