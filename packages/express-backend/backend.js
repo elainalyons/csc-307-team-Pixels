@@ -1,14 +1,17 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "mongoose";  
+import mongoose from "mongoose";
 import * as journalService from "./services/journal-service.js";
-import {authenticateUser, loginUser, registerUser} from "./auth.js"
+import {
+  authenticateUser,
+  loginUser,
+  registerUser
+} from "./auth.js";
 
 //to run back end: npm run dev
 //alt way to run: npm run start --workspace=express-backend
 dotenv.config();
-
 
 console.log(
   "MONGO_CONNECTION_STRING =",
@@ -19,11 +22,12 @@ const { MONGO_CONNECTION_STRING } = process.env;
 
 mongoose.set("debug", true);
 const base = MONGO_CONNECTION_STRING.replace(/\/+$/, "");
-mongoose.connect(`${base}/journal`)
+mongoose
+  .connect(`${base}/journal`)
   .then(() => console.log("✅ MongoDB connected to journal DB"))
   .catch((error) => console.log("❌ MongoDB error:", error));
 
-//express setup 
+//express setup
 const app = express();
 const port = 8000;
 
@@ -46,12 +50,12 @@ app.get("/me", authenticateUser, (req, res) => {
   return res.status(200).json({ ok: true });
 });
 
-
 // GET /entries
 app.get("/entries", authenticateUser, async (req, res) => {
   try {
     const owner = req.user.username;
-    const entries = await journalService.getEntriesByOwner(owner);
+    const entries =
+      await journalService.getEntriesByOwner(owner);
     res.status(200).json({ entries });
   } catch (error) {
     console.error("GET /entries error:", error);
@@ -90,7 +94,10 @@ app.post("/entries", authenticateUser, async (req, res) => {
 app.get("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
-    const entry = await journalService.deleteEntryByIdForOwner(id, owner);
+    const entry = await journalService.deleteEntryByIdForOwner(
+      id,
+      owner
+    );
     if (!entry) return res.status(404).send("Entry not found.");
     return res.status(200).json(entry);
   } catch (error) {
@@ -102,28 +109,33 @@ app.get("/entries/:id", authenticateUser, async (req, res) => {
 });
 
 // DELETE /entries/:id
-app.delete("/entries/:id", authenticateUser, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const owner = req.user.username;
+app.delete(
+  "/entries/:id",
+  authenticateUser,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const owner = req.user.username;
 
-    const deleted = await journalService.deleteEntryByIdForOwner(id,owner);
+      const deleted =
+        await journalService.deleteEntryByIdForOwner(id, owner);
 
-    if (!deleted) {
-      return res.status(404).send("Entry not found.");
+      if (!deleted) {
+        return res.status(404).send("Entry not found.");
+      }
+
+      // either return the deleted doc or just a success message
+      return res
+        .status(200)
+        .json({ message: "Entry deleted.", id });
+    } catch (error) {
+      console.error("DELETE /entries/:id error:", error);
+      return res
+        .status(500)
+        .send("An error occurred in the server.");
     }
-
-    // either return the deleted doc or just a success message
-    return res
-      .status(200)
-      .json({ message: "Entry deleted.", id });
-  } catch (error) {
-    console.error("DELETE /entries/:id error:", error);
-    return res
-      .status(500)
-      .send("An error occurred in the server.");
   }
-});
+);
 
 // PUT /entries/:id  (edit an entry)
 // backend.js — verbose safe PUT route
@@ -142,18 +154,23 @@ app.put("/entries/:id", authenticateUser, async (req, res) => {
     }
 
     if (!title || !body) {
-      return res.status(400).send("title and body are required.");
+      return res
+        .status(400)
+        .send("title and body are required.");
     }
 
     // call the correctly-named service function
-    const updated = await journalService.updateEntryByIdForOwner(
-      id,
-      req.user.username,
-      { title, body, date }
-    );
+    const updated =
+      await journalService.updateEntryByIdForOwner(
+        id,
+        req.user.username,
+        { title, body, date }
+      );
 
     if (!updated) {
-      console.log("Update returned null -> not found or not owner");
+      console.log(
+        "Update returned null -> not found or not owner"
+      );
       return res.status(404).send("Entry not found.");
     }
 
@@ -162,14 +179,18 @@ app.put("/entries/:id", authenticateUser, async (req, res) => {
   } catch (error) {
     console.error("🔥 PUT /entries/:id error:", error);
     // expose error message & stack to help debugging (remove in prod)
-    return res.status(500).json({ error: error.message, stack: error.stack });
+    return res
+      .status(500)
+      .json({ error: error.message, stack: error.stack });
   }
 });
 
 //---
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
-  res.status(500).json({ error: err.message || "Server error" });
+  res
+    .status(500)
+    .json({ error: err.message || "Server error" });
 });
 //----
 
