@@ -9,6 +9,7 @@ import {authenticateUser, loginUser, registerUser} from "./auth.js"
 //alt way to run: npm run start --workspace=express-backend
 dotenv.config();
 
+
 console.log(
   "MONGO_CONNECTION_STRING =",
   process.env.MONGO_CONNECTION_STRING
@@ -17,23 +18,40 @@ console.log(
 const { MONGO_CONNECTION_STRING } = process.env;
 
 mongoose.set("debug", true);
-mongoose
-  .connect(MONGO_CONNECTION_STRING + "journal")
+const base = MONGO_CONNECTION_STRING.replace(/\/+$/, "");
+mongoose.connect(`${base}/journal`)
   .then(() => console.log("✅ MongoDB connected to journal DB"))
   .catch((error) => console.log("❌ MongoDB error:", error));
 
+//express setup 
 const app = express();
 const port = 8000;
 
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
+
+// ----
+app.use((req, res, next) => {
+  console.log(`➡️  ${req.method} ${req.path}`);
+  next();
+});
+//---
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
+app.post("/signup", registerUser);
+app.post("/login", loginUser);
+
+app.get("/me", authenticateUser, (req, res) => {
+  return res.status(200).json({ ok: true });
+});
+
+
 // GET /entries
-app.get("/entries", async (req, res) => {
+app.get("/entries", authenticateUser, async (req, res) => {
   try {
-    const entries = await journalService.getAllEntries();
+    const owner = req.user.username;
+    =const entries = await journalService.getEntriesByOwner(owner);
     res.status(200).json({ entries });
   } catch (error) {
     console.error("GET /entries error:", error);
@@ -42,7 +60,7 @@ app.get("/entries", async (req, res) => {
 });
 
 // POST /entries
-app.post("/entries", async (req, res) => {
+app.post("/entries", authenticateUser, async (req, res) => {
   try {
     console.log("POST /entries hit");
     console.log("content-type:", req.headers["content-type"]);
@@ -57,7 +75,8 @@ app.post("/entries", async (req, res) => {
     const saved = await journalService.createEntry({
       title,
       body,
-      date
+      date,
+      owner //attach journal to specific user
     });
     res.status(201).json(saved);
   } catch (error) {
@@ -67,7 +86,7 @@ app.post("/entries", async (req, res) => {
   }
 });
 
-app.get("/entries/:id", async (req, res) => {
+app.get("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
     const entry = await journalService.getEntryById(id);
@@ -81,14 +100,8 @@ app.get("/entries/:id", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(
-    `Example app listening at http://localhost:${port}`
-  );
-});
-
 // DELETE /entries/:id
-app.delete("/entries/:id", async (req, res) => {
+app.delete("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -111,7 +124,7 @@ app.delete("/entries/:id", async (req, res) => {
 });
 
 // PUT /entries/:id  (edit an entry)
-app.put("/entries/:id", async (req, res) => {
+app.put("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
     const { title, body, date } = req.body ?? {};
@@ -141,13 +154,15 @@ app.put("/entries/:id", async (req, res) => {
   }
 });
 
+//---
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: err.message || "Server error" });
+});
+//----
 
-app.post("/users", authenticateUser, (req, res) => {
-  const userToAdd = req.body;
-  Users.addUser(userToAdd).then((result) =>
-    res.status(201).send(result)
+app.listen(port, () => {
+  console.log(
+    `Example app listening at http://localhost:${port}`
   );
-  });
-
-app.post("/signup", registerUser);
-app.post("/login", loginUser);
+});
