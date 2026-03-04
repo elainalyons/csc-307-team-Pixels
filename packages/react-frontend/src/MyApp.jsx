@@ -1,12 +1,7 @@
 // src/MyApp.jsx
 // can start frontend by running npm start from root directory of project
 import React, { useState, useEffect } from "react";
-import {
-  Routes,
-  Route,
-  Link,
-  useNavigate
-} from "react-router-dom";
+import {Routes,Route,Link,useNavigate} from "react-router-dom";
 import Calendar from "./calendar";
 import Table from "./Table";
 import NewEntryForm from "./NewEntryForm";
@@ -15,11 +10,10 @@ import EntryDetailsPage from "./EntryDetailsPage";
 import "./MyApp.css";
 import Login from "./Login";
 
-
+const INVALID_TOKEN = "INVALID_TOKEN";
 
 function MyApp() {
   const [entries, setEntries] = useState([]);
-  const INVALID_TOKEN = "INVALID_TOKEN";
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
   const API_PREFIX = "http://localhost:8000";
@@ -78,68 +72,80 @@ function MyApp() {
     });
   }
 
-  function handleDelete(id) {
-    // optional confirm pop-up
-    const ok = window.confirm(
-      "Delete this journal entry? This cannot be undone."
-    );
-    if (!ok) return;
+function handleDelete(id) {
+  const ok = window.confirm("Delete this journal entry? This cannot be undone.");
+  if (!ok) return;
 
-    deleteEntry(id)
-      .then((res) => {
-        if (!res.ok) throw new Error("Delete failed");
-        // Remove from state so UI updates instantly
-        setEntries((prev) => prev.filter((e) => e._id !== id));
-      })
-      .catch((error) => console.log(error));
-  }
-
-
-  function loginUser(creds) {
-    const promise = fetch(`${API_PREFIX}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(creds)
+  deleteEntry(id)
+    .then((res) => {
+      if (!res.ok) throw new Error("Delete failed");
+      setEntries((prev) => prev.filter((e) => e._id !== id));
     })
-      .then((response) => {
-        if (response.status === 200) {
-          response
-            .json()
-            .then((payload) => setToken(payload.token));
-          setMessage(`Login successful; auth token saved`);
-        } else {
-          setMessage(
-            `Login Error ${response.status}: ${response.data}`
-          );
-        }
-      })
-      .catch((error) => {
-        setMessage(`Login Error: ${error}`);
-      });
+    .catch((error) => {
+      console.log(error);
+      setMessage("Delete failed");
+    });
+}
 
-    return promise;
-  }
 
-  function signupUser(creds) {
-    return fetch(`${API_PREFIX}/signup`, {
+async function loginUser(creds) {
+  try {
+    const res = await fetch(`${API_PREFIX}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(creds),
-    })
-      .then(async (response) => {
-        if (response.status === 201) {
-          const payload = await response.json();
-          setToken(payload.token);
-          setMessage(`Signup successful; auth token saved`);
-        } else {
-          const txt = await response.text();
-          setMessage(`Signup Error ${response.status}: ${txt}`);
-        }
-      })
-      .catch((error) => setMessage(`Signup Error: ${error}`));
+    });
+
+    const contentType = res.headers.get("content-type") || "";
+    const body = contentType.includes("application/json")
+      ? await res.json()
+      : await res.text();
+
+    if (!res.ok) {
+      throw new Error(
+        typeof body === "string" ? body : JSON.stringify(body)
+      );
+    }
+
+    // expect { token: "..." }
+    setToken(body.token);
+    setMessage("Login successful; auth token saved");
+    navigate("/home");
+    return true;
+  } catch (err) {
+    setMessage(`Login Error: ${err.message}`);
+    return false;
   }
+}
+
+async function signupUser(creds) {
+  try {
+    const res = await fetch(`${API_PREFIX}/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(creds),
+    });
+
+    const contentType = res.headers.get("content-type") || "";
+    const body = contentType.includes("application/json")
+      ? await res.json()
+      : await res.text();
+
+    if (!res.ok) {
+      throw new Error(
+        typeof body === "string" ? body : JSON.stringify(body)
+      );
+    }
+
+    setToken(body.token);
+    setMessage(`Signup successful for user: ${creds.username}`);
+    navigate("\home");
+    return true;
+  } catch (err) {
+    setMessage(`Signup Error: ${err.message}`);
+    return false;
+  }
+}
 
   function addAuthHeader(otherHeaders = {}) {
     if (token === INVALID_TOKEN) {
@@ -151,16 +157,6 @@ function MyApp() {
       };
     }
   }
-
-  function fetchUsers() {
-    const promise = fetch(`${API_PREFIX}/users`, {
-      headers: addAuthHeader()
-    });
-
-    return promise;
-  }
-
-
 
   function handleUpdate(id, updates) {
     putEntry(id, updates)
@@ -185,15 +181,31 @@ function MyApp() {
       .catch((err) => console.log(err));
   }
 
-  useEffect(() => {
-    fetchEntries()
-      .then((res) => (res.status === 200 ? res.json() : undefined))
-      .then((json) => {
-        if (json) setEntries(json.entries);
-        else setEntries(null); // optional: show "Data Unavailable"
-      })
-      .catch((error) => console.log(error));
-  }, [token]);
+//only get entries when token is valid 
+useEffect(() => {
+  if (token === INVALID_TOKEN) {
+    setEntries([]); // clear entries when logged out
+    return;
+  }
+
+  fetchEntries()
+    .then(async (res) => {
+      if (res.status === 401) {
+        setToken(INVALID_TOKEN);
+        setMessage("Session expired. Please log in again.");
+        navigate("/login");
+        return null;
+      }
+      if (!res.ok) throw new Error(await res.text());
+      return res.json();
+    })
+    .then((json) => {
+      if (!json) return;
+      setEntries(json.entries ?? json["entries"] ?? []);
+    })
+    .catch((error) => setMessage(`Fetch entries failed: ${error.message}`));
+}, [token, navigate]);
+
 
   return (
     <div className="app-shell">
@@ -201,19 +213,21 @@ function MyApp() {
         <div className="logo">Reflekt⭐️</div>
 
         <div className="nav-links">
-          <Link to="/">Login</Link>
+          <Link to="/login">Login</Link>
+          <Link to="/signup">Sign up</Link>
           <Link to="/home">Home</Link>
           <Link to="/calendar">Calendar</Link>
           <Link to="/entries">All Entries</Link>
         </div>
       </nav>
 
+
       <Routes>
         <Route
-          path="/"
-          element={<Login handleSubmit={loginUser} />}
+          path="/login"
+          element={<Login handleSubmit={loginUser} message={message}  />}
         />
-        <Route path="/signup" element={<Login handleSubmit={signupUser} buttonLabel="Sign Up" />} />
+        <Route path="/signup" element={<Login handleSubmit={signupUser} buttonLabel="Sign Up"  message={message}  />} />
         <Route
           path="/home"
           element={

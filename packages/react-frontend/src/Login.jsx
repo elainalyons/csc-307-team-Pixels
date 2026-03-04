@@ -3,7 +3,7 @@ import React, { useState } from "react";
 function Login(props) {
   const [creds, setCreds] = useState({
     username: "",
-    pwd: ""
+    password: ""
   });
 
   return (
@@ -21,7 +21,7 @@ function Login(props) {
         type="password"
         name="password"
         id="password"
-        value={creds.pwd}
+        value={creds.password}
         onChange={handleChange}
       />
       <input
@@ -29,6 +29,9 @@ function Login(props) {
         value={props.buttonLabel || "Log In"}
         onClick={submitForm}
       />
+      {props.message && <p>{props.message}</p>} 
+      {/* return error message*/}
+
     </form>
   );
 
@@ -39,14 +42,14 @@ function Login(props) {
         setCreds({ ...creds, username: value });
         break;
       case "password":
-        setCreds({ ...creds, pwd: value });
+        setCreds({ ...creds, password: value });
         break;
     }
   }
 
   function submitForm() {
     props.handleSubmit(creds);
-    setCreds({ username: "", pwd: "" });
+    setCreds({ username: "", password: "" });
   }
 }
 export default Login;
