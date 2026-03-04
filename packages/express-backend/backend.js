@@ -51,7 +51,7 @@ app.get("/me", authenticateUser, (req, res) => {
 app.get("/entries", authenticateUser, async (req, res) => {
   try {
     const owner = req.user.username;
-    =const entries = await journalService.getEntriesByOwner(owner);
+    const entries = await journalService.getEntriesByOwner(owner);
     res.status(200).json({ entries });
   } catch (error) {
     console.error("GET /entries error:", error);
@@ -72,6 +72,7 @@ app.post("/entries", authenticateUser, async (req, res) => {
         .status(400)
         .send("title and body and date are required.");
 
+    const owner = req.user.username;
     const saved = await journalService.createEntry({
       title,
       body,
@@ -89,7 +90,7 @@ app.post("/entries", authenticateUser, async (req, res) => {
 app.get("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
-    const entry = await journalService.getEntryById(id);
+    const entry = await journalService.deleteEntryByIdForOwner(id, owner);
     if (!entry) return res.status(404).send("Entry not found.");
     return res.status(200).json(entry);
   } catch (error) {
@@ -105,7 +106,7 @@ app.delete("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deleted = await journalService.deleteEntryById(id);
+    const deleted = await journalService.deleteEntryByIdForOwner(id,owner);
 
     if (!deleted) {
       return res.status(404).send("Entry not found.");
@@ -136,7 +137,7 @@ app.put("/entries/:id", authenticateUser, async (req, res) => {
         .send("title and body are required.");
     }
 
-    const updated = await journalService.updateEntryById(id, {
+    const updated = await journalService.deleteEntryByIdForOwner(id, owner,{
       title,
       body,
       date

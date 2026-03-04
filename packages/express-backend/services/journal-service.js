@@ -1,43 +1,38 @@
 import JournalEntry from "../models/journal-entry.js";
 
-export async function createEntry({ title, body, date }) {
-  return JournalEntry.create({ title, body, date });
+export async function createEntry({ title, body, date, owner }) {
+  return JournalEntry.create({ title, body, date, owner });
 }
 
-export async function getAllEntries() {
-  // If date field exists, keep it
-  // If date field is not populated, add it with value of createdAt
-  // Display in order of date
+export async function getEntriesByOwner(owner) {
   return JournalEntry.aggregate([
+    { $match: { owner } },
     {
       $addFields: {
         date: { $ifNull: ["$date", "$createdAt"] }
       }
     },
-    {
-      $sort: { date: -1 }
-    }
+    { $sort: { date: -1 } }
   ]);
 }
 
-export async function getEntryById(id) {
-  return JournalEntry.findById(id);
+export async function getEntryByIdForOwner(id, owner) {
+  return JournalEntry.findOne({ _id: id, owner });
 }
 
-export async function deleteEntryById(id) {
-  return JournalEntry.findByIdAndDelete(id);
+export async function deleteEntryByIdForOwner(id, owner) {
+  return JournalEntry.findOneAndDelete({ _id: id, owner });
 }
 
-export async function updateEntryById(id, updates) {
-  // Only allow fields we expect (keeps it safe)
+export async function updateEntryByIdForOwner(id, owner, updates) {
   const allowed = {};
-  if (updates.title !== undefined)
-    allowed.title = updates.title;
+  if (updates.title !== undefined) allowed.title = updates.title;
   if (updates.body !== undefined) allowed.body = updates.body;
   if (updates.date !== undefined) allowed.date = updates.date;
 
-  return JournalEntry.findByIdAndUpdate(id, allowed, {
-    new: true,
-    runValidators: true
-  });
+  return JournalEntry.findOneAndUpdate(
+    { _id: id, owner },
+    allowed,
+    { new: true, runValidators: true }
+  );
 }
