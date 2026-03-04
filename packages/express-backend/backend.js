@@ -126,33 +126,43 @@ app.delete("/entries/:id", authenticateUser, async (req, res) => {
 });
 
 // PUT /entries/:id  (edit an entry)
+// backend.js — verbose safe PUT route
 app.put("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
     const { title, body, date } = req.body ?? {};
 
-    // Optional: basic validation (title/body required for your schema)
-    if (!title || !body) {
-      return res
-        .status(400)
-        .send("title and body are required.");
+    console.log("PUT /entries/:id called, id=", id);
+    console.log("Request body:", { title, body, date });
+    console.log("req.user (from auth):", req.user);
+
+    if (!req.user) {
+      console.error("No req.user — token missing or invalid");
+      return res.status(401).send("Unauthorized: no user");
     }
 
-    const updated = await journalService.deleteEntryByIdForOwner(id, owner,{
-      title,
-      body,
-      date
-    });
+    if (!title || !body) {
+      return res.status(400).send("title and body are required.");
+    }
 
-    if (!updated)
+    // call the correctly-named service function
+    const updated = await journalService.updateEntryByIdForOwner(
+      id,
+      req.user.username,
+      { title, body, date }
+    );
+
+    if (!updated) {
+      console.log("Update returned null -> not found or not owner");
       return res.status(404).send("Entry not found.");
+    }
 
+    console.log("Update success:", updated._id);
     return res.status(200).json(updated);
   } catch (error) {
-    console.error("PUT /entries/:id error:", error);
-    return res
-      .status(500)
-      .send("An error occurred in the server.");
+    console.error("🔥 PUT /entries/:id error:", error);
+    // expose error message & stack to help debugging (remove in prod)
+    return res.status(500).json({ error: error.message, stack: error.stack });
   }
 });
 
