@@ -2,7 +2,7 @@
 // can start frontend by running npm start from root directory of project
 import React, { useState, useEffect } from "react";
 import {Routes,Route,Link,useNavigate} from "react-router-dom";
-import Calendar from "./calendar";
+import Calendar from "./Calendar";
 import Table from "./Table";
 import NewEntryForm from "./NewEntryForm";
 import EntryModal from "./EntryModal";
