@@ -191,12 +191,22 @@ useEffect(() => {
 
   fetchEntries()
     .then(async (res) => {
+      if (res.status === 401) {
+        setToken(INVALID_TOKEN);
+        setMessage("Session expired. Please log in again.");
+        navigate("/login");
+        return null;
+      }
       if (!res.ok) throw new Error(await res.text());
       return res.json();
     })
-    .then((json) => setEntries(json.entries ?? json["entries"] ?? []))
+    .then((json) => {
+      if (!json) return;
+      setEntries(json.entries ?? json["entries"] ?? []);
+    })
     .catch((error) => setMessage(`Fetch entries failed: ${error.message}`));
-}, [token]);
+}, [token, navigate]);
+
 
   return (
     <div className="app-shell">
