@@ -7,7 +7,7 @@ import {
   Link,
   useNavigate
 } from "react-router-dom";
-import Calendar from "./calendar";
+import Calendar from "./Calendar";
 import Table from "./Table";
 import NewEntryForm from "./NewEntryForm";
 import EntryModal from "./EntryModal";
