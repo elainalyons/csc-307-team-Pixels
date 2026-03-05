@@ -40,16 +40,6 @@ app.use(
   })
 );
 
-// Make sure Express handles OPTIONS requests for preflight
-app.options(
-  "*",
-  cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  })
-);
-
 app.use(express.json());
 
 // ----
