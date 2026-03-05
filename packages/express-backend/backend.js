@@ -34,11 +34,21 @@ const port = 8000;
 app.use(
   cors({
     origin:
-      "https://witty-desert-068c7511e.6.azurestaticapps.net"
+      "https://witty-desert-068c7511e.6.azurestaticapps.net",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
-app.options("*", cors());
+// Make sure Express handles OPTIONS requests for preflight
+app.options(
+  "*",
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
 
 app.use(express.json());
 
