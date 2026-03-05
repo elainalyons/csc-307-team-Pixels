@@ -152,7 +152,7 @@ function MyApp() {
       setMessage(
         `Signup successful for user: ${creds.username}`
       );
-      navigate("\home");
+      navigate("/home");
       return true;
     } catch (err) {
       setMessage(`Signup Error: ${err.message}`);
