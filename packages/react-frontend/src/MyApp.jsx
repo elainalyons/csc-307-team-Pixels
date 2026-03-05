@@ -22,7 +22,7 @@ function MyApp() {
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
   const API_PREFIX =
-    "http://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
+    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
   const [selectedEntryId, setSelectedEntryId] = useState(null);

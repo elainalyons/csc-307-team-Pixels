@@ -195,7 +195,5 @@ app.use((err, req, res, next) => {
 //----
 
 app.listen(process.env.PORT || port, () => {
-  console.log(
-    `Example app listening at http://localhost:${port}`
-  );
+  console.log(console.log("REST API is listening."));
 });
