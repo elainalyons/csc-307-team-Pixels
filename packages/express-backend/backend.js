@@ -31,7 +31,12 @@ mongoose
 const app = express();
 const port = 8000;
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(
+  cors({
+    origin:
+      "https://witty-desert-068c7511e.6.azurestaticapps.net"
+  })
+);
 app.use(express.json());
 
 // ----
