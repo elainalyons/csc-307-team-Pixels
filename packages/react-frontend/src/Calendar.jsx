@@ -1,18 +1,32 @@
 import React, { useMemo, useState } from "react";
 
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WEEKDAYS = [
+  "Sun",
+  "Mon",
+  "Tue",
+  "Wed",
+  "Thu",
+  "Fri",
+  "Sat"
+];
 
 function startOfMonth(date) {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
 function daysInMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  return new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    0
+  ).getDate();
 }
 
 export default function Calendar() {
   //show the current month
-  const [monthCursor] = useState(() => startOfMonth(new Date()));
+  const [monthCursor] = useState(() =>
+    startOfMonth(new Date())
+  );
 
   const cells = useMemo(() => {
     const first = startOfMonth(monthCursor);
@@ -43,9 +57,8 @@ export default function Calendar() {
           gridTemplateColumns: "repeat(7, 1fr)",
           gap: 8,
           marginBottom: 8,
-          fontWeight: 600,
-        }}
-      >
+          fontWeight: 600
+        }}>
         {WEEKDAYS.map((w) => (
           <div key={w} style={{ textAlign: "center" }}>
             {w}
@@ -54,10 +67,17 @@ export default function Calendar() {
       </div>
 
       {/* grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 8 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, 1fr)",
+          gap: 8
+        }}>
         {cells.map((cell) => {
           if (cell.type === "blank") {
-            return <div key={cell.key} style={{ height: 70 }} />;
+            return (
+              <div key={cell.key} style={{ height: 70 }} />
+            );
           }
 
           return (
@@ -68,9 +88,8 @@ export default function Calendar() {
                 border: "1px solid #ccc",
                 borderRadius: 10,
                 padding: 10,
-                fontWeight: 700,
-              }}
-            >
+                fontWeight: 700
+              }}>
               {cell.day}
             </div>
           );
