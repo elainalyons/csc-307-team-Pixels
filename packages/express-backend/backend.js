@@ -37,6 +37,9 @@ app.use(
       "https://witty-desert-068c7511e.6.azurestaticapps.net"
   })
 );
+
+app.options("*", cors());
+
 app.use(express.json());
 
 // ----
