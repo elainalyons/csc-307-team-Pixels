@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "npx eslint . && npx prettier --check .",
     "test": "echo \"Error: no test specified\"",
-    "dev": "npx nodemon backend.js",
-    "start": "DEBUG=express:* nodemon backend.js"
+    "start": "node backend.js",
+    "dev": "DEBUG=express:* nodemon backend.js"
   },
   "author": "",
   "license": "ISC",
