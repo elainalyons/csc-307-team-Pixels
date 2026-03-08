@@ -82,11 +82,6 @@ function MyApp() {
       });
   }
 
-  function fetchEntries() {
-    return fetch(`${API_PREFIX}/entries`, {
-      headers: addAuthHeader()
-    });
-  }
 
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
@@ -230,11 +225,13 @@ function MyApp() {
   //only get entries when token is valid
   useEffect(() => {
     if (token === INVALID_TOKEN) {
-      setEntries([]); // clear entries when logged out
+      setEntries([]);
       return;
     }
 
-    fetchEntries()
+    fetch(`${API_PREFIX}/entries`, {
+      headers: addAuthHeader()
+    })
       .then(async (res) => {
         if (res.status === 401) {
           setToken(INVALID_TOKEN);
@@ -321,6 +318,7 @@ function MyApp() {
                 </div>
 
                 <NewEntryForm
+                  key={selectedDate}
                   handleSubmit={updateList}
                   selectedDate={selectedDate}
                 />

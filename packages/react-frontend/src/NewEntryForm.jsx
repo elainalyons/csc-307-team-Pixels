@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./NewEntryForm.css";
 
 function NewEntryForm(props) {
@@ -14,13 +14,6 @@ function NewEntryForm(props) {
     body: "",
     date: props.selectedDate || getTodayDate()
   });
-
-  useEffect(() => {
-    setEntry((prevEntry) => ({
-      ...prevEntry,
-      date: props.selectedDate || getTodayDate()
-    }));
-  }, [props.selectedDate]);
 
   function handleChange(event) {
     const { name, value } = event.target;
