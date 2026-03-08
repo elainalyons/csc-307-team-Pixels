@@ -218,10 +218,6 @@ app.use((err, req, res, next) => {
 });
 //----
 
-app.listen(process.env.PORT || port, () => {
-  console.log(console.log("REST API is listening."));
-});
-
 // fetching a quote
 app.get("/quote", async (req, res) => {
   try {
@@ -229,8 +225,24 @@ app.get("/quote", async (req, res) => {
       "https://zenquotes.io/api/random"
     );
     const data = await response.json();
-    res.json(data);
+
+    // Check for ZenQuotes rate limit
+    if (data[0].q.includes("Too many requests")) {
+      console.log("Too many requests from ZenQuotes API");
+      return res
+        .status(429)
+        .json({ error: "Rate limit reached" });
+    }
+    // send formatted quote
+    res.json({
+      text: data[0].q,
+      author: data[0].a
+    });
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch quote" });
   }
+});
+
+app.listen(process.env.PORT || port, () => {
+  console.log(console.log("REST API is listening."));
 });

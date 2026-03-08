@@ -8,7 +8,7 @@ name:
 on:
   push:
     branches:
-      - quotes
+      - main
   workflow_dispatch:
 
 jobs:
