@@ -12,6 +12,7 @@ import Table from "./Table";
 import NewEntryForm from "./NewEntryForm";
 import EntryModal from "./EntryModal";
 import EntryDetailsPage from "./EntryDetailsPage";
+import QuoteOfDay from "./QuoteOfDay";
 import "./MyApp.css";
 import Login from "./Login";
 
@@ -287,7 +288,7 @@ function MyApp() {
                 )}
               </div>
               <div className="right-panel">
-                {/* Optional later: stats, filters, mood chart, etc. */}
+                <QuoteOfDay />
               </div>
             </div>
           }
