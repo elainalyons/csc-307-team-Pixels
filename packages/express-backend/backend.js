@@ -33,8 +33,10 @@ const port = 8000;
 
 app.use(
   cors({
-    origin:
-      "https://witty-desert-068c7511e.6.azurestaticapps.net",
+    origin: [
+      "https://witty-desert-068c7511e.6.azurestaticapps.net", // production frontend
+      "http://localhost:5173" // local dev frontend
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
@@ -218,4 +220,17 @@ app.use((err, req, res, next) => {
 
 app.listen(process.env.PORT || port, () => {
   console.log(console.log("REST API is listening."));
+});
+
+// fetching a quote
+app.get("/quote", async (req, res) => {
+  try {
+    const response = await fetch(
+      "https://zenquotes.io/api/random"
+    );
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch quote" });
+  }
 });

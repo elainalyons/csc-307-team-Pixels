@@ -6,13 +6,14 @@ function QuoteOfDay() {
 
   function getQuote() {
     setLoading(true);
-
-    fetch("https://api.quotable.io/random")
-      .then((res) => res.json())
+    const API_PREFIX =
+      "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
+    fetch(`${API_PREFIX}/quote`)
       .then((data) => {
+        console.log(data);
         setQuote({
-          text: data.content,
-          author: data.author
+          text: data.q,
+          author: data.a
         });
         setLoading(false);
       })
