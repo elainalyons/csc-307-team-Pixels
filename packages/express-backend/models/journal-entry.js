@@ -11,7 +11,10 @@ const journalEntrySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-journalEntrySchema.index({ owner: 1, dateKey: 1 }, { unique: true });
+journalEntrySchema.index(
+  { owner: 1, dateKey: 1 },
+  { unique: true }
+);
 
 export default mongoose.model(
   "JournalEntry",

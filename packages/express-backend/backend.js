@@ -94,11 +94,10 @@ app.get(
       const owner = req.user.username;
       const { date } = req.params;
 
-      const entry =
-        await journalService.getEntryByDateForOwner(
-          date,
-          owner
-        );
+      const entry = await journalService.getEntryByDateForOwner(
+        date,
+        owner
+      );
 
       if (!entry) {
         return res.status(200).json({ entry: null });
@@ -129,12 +128,13 @@ app.post("/entries", authenticateUser, async (req, res) => {
     }
 
     const owner = req.user.username;
-    const saved = await journalService.upsertEntryByDateForOwner({
-      title,
-      body,
-      date,
-      owner
-    });
+    const saved =
+      await journalService.upsertEntryByDateForOwner({
+        title,
+        body,
+        date,
+        owner
+      });
 
     res.status(200).json(saved);
   } catch (error) {
@@ -143,7 +143,6 @@ app.post("/entries", authenticateUser, async (req, res) => {
     res.status(500).send("An error occurred in the server.");
   }
 });
-
 
 app.get("/entries/:id", authenticateUser, async (req, res) => {
   try {
