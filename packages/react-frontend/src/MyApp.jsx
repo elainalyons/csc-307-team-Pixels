@@ -65,17 +65,34 @@ function MyApp() {
 
   function updateList(entry) {
     postEntry(entry)
-      .then((res) => {
-        if (res.status === 201) return res.json();
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(await res.text());
+        }
+        return res.json();
       })
       .then((json) => {
-        setEntries((prevEntries) =>
-          [...prevEntries, json].sort(
+        setEntries((prevEntries) => {
+          const existingIndex = prevEntries.findIndex(
+            (e) => e._id === json._id
+          );
+
+          if (existingIndex !== -1) {
+            const updatedEntries = [...prevEntries];
+            updatedEntries[existingIndex] = json;
+            return updatedEntries.sort(
+              (a, b) =>
+                new Date(b.date || b.createdAt) -
+                new Date(a.date || a.createdAt)
+            );
+          }
+
+          return [...prevEntries, json].sort(
             (a, b) =>
               new Date(b.date || b.createdAt) -
               new Date(a.date || a.createdAt)
-          )
-        );
+          );
+        });
       })
       .catch((error) => {
         console.log(error);
