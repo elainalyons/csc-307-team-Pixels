@@ -25,10 +25,43 @@ function MyApp() {
     "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    const localDate = new Date(today.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().split("T")[0];
+  };
+  const [selectedDate, setSelectedDate] = useState(getTodayDate());
+
   const [selectedEntryId, setSelectedEntryId] = useState(null);
   const selectedEntry = entries.find(
     (e) => e._id === selectedEntryId
   );
+
+  function changeDateByDays(days) {
+    const current = new Date(`${selectedDate}T12:00:00`);
+    current.setDate(current.getDate() + days);
+
+    const yyyy = current.getFullYear();
+    const mm = String(current.getMonth() + 1).padStart(2, "0");
+    const dd = String(current.getDate()).padStart(2, "0");
+
+    setSelectedDate(`${yyyy}-${mm}-${dd}`);
+  }
+
+  const formattedSelectedDate = new Date(
+    `${selectedDate}T00:00:00`
+  ).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  });
+
+  const displayDateLabel =
+    selectedDate === getTodayDate()
+      ? "Today"
+      : formattedSelectedDate;
+
 
   function updateList(entry) {
     postEntry(entry)
@@ -257,7 +290,41 @@ function MyApp() {
           element={
             <div className="page-content">
               <div className="left-panel">
-                <NewEntryForm handleSubmit={updateList} />
+                <div className="date-navigation">
+                  <button
+                    type="button"
+                    className="date-nav-button"
+                    onClick={() => changeDateByDays(-1)}
+                  >
+                    ‹
+                  </button>
+
+                  <h1 className="date-navigation-label">
+                    {displayDateLabel}
+                  </h1>
+
+                  <button
+                    type="button"
+                    className="date-nav-button"
+                    onClick={() => changeDateByDays(1)}
+                  >
+                    ›
+                  </button>
+
+                  <button
+                    type="button"
+                    className="today-button"
+                    onClick={() => setSelectedDate(getTodayDate())}
+                  >
+                    Today
+                  </button>
+                </div>
+
+                <NewEntryForm
+                  handleSubmit={updateList}
+                  selectedDate={selectedDate}
+                />
+
                 <h1>Previous Journal Entries</h1>
                 <Table
                   journalData={entries.slice(0, 3)}

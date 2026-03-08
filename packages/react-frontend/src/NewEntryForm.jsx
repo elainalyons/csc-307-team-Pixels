@@ -1,14 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./NewEntryForm.css";
 
 function NewEntryForm(props) {
-  const getTodayDate = () => new Date().toISOString().split("T")[0];
+  const getTodayDate = () => {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    const localDate = new Date(today.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().split("T")[0];
+  };
 
   const [entry, setEntry] = useState({
     title: "",
     body: "",
-    date: getTodayDate()
+    date: props.selectedDate || getTodayDate()
   });
+
+  useEffect(() => {
+    setEntry((prevEntry) => ({
+      ...prevEntry,
+      date: props.selectedDate || getTodayDate()
+    }));
+  }, [props.selectedDate]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -24,7 +36,7 @@ function NewEntryForm(props) {
     setEntry({
       title: "",
       body: "",
-      date: getTodayDate()
+      date: props.selectedDate || getTodayDate()
     });
   }
 

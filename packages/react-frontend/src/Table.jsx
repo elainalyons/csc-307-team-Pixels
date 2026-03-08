@@ -13,9 +13,9 @@ function TableHeader() {
 }
 
 const formatDate = (value) => {
-  const d = new Date(value);
-  /*   return value && !isNaN(d) */
-  return value && !isNaN(d)
+  if (!value) return "";
+  const d = new Date(`${value.toString().slice(0, 10)}T12:00:00`);
+  return !isNaN(d)
     ? d.toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",
@@ -33,6 +33,13 @@ const toDateInputValue = (value) => {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
+};
+
+const getTodayDate = () => {
+  const today = new Date();
+  const offset = today.getTimezoneOffset();
+  const localDate = new Date(today.getTime() - offset * 60 * 1000);
+  return localDate.toISOString().split("T")[0];
 };
 
 function TableBody(props) {
@@ -65,7 +72,7 @@ function TableBody(props) {
     props.onUpdate(id, {
       title: draft.title,
       body: draft.body,
-      date: draft.date ? new Date(draft.date) : new Date()
+      date: draft.date || getTodayDate()
     });
     setEditingId(null);
   };
