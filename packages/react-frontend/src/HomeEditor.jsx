@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./NewEntryForm.css";
 
 function HomeEditor({ entry, selectedDate, onSave }) {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-
-  useEffect(() => {
-    setTitle(entry?.title ?? "");
-    setBody(entry?.body ?? "");
-  }, [entry]);
+  const [title, setTitle] = useState(entry?.title ?? "");
+  const [body, setBody] = useState(entry?.body ?? "");
 
   function handleSave() {
     onSave({

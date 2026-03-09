@@ -65,43 +65,6 @@ function MyApp() {
       ? "Today"
       : formattedSelectedDate;
 
-
-  function updateList(entry) {
-    postEntry(entry)
-      .then(async (res) => {
-        if (!res.ok) {
-          throw new Error(await res.text());
-        }
-        return res.json();
-      })
-      .then((json) => {
-        setEntries((prevEntries) => {
-          const existingIndex = prevEntries.findIndex(
-            (e) => e._id === json._id
-          );
-
-          if (existingIndex !== -1) {
-            const updatedEntries = [...prevEntries];
-            updatedEntries[existingIndex] = json;
-            return updatedEntries.sort(
-              (a, b) =>
-                new Date(b.date || b.createdAt) -
-                new Date(a.date || a.createdAt)
-            );
-          }
-
-          return [...prevEntries, json].sort(
-            (a, b) =>
-              new Date(b.date || b.createdAt) -
-              new Date(a.date || a.createdAt)
-          );
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   function saveSelectedDateEntry(entry) {
     postEntry(entry)
       .then(async (res) => {
@@ -149,12 +112,6 @@ function MyApp() {
         "Content-Type": "application/json"
       }),
       body: JSON.stringify(entry)
-    });
-  }
-
-  function fetchEntryByDate(date) {
-    return fetch(`${API_PREFIX}/entries/by-date/${date}`, {
-      headers: addAuthHeader()
     });
   }
 
@@ -293,7 +250,11 @@ function MyApp() {
       return;
     }
 
-    fetchEntryByDate(selectedDate)
+    fetch(`${API_PREFIX}/entries/by-date/${selectedDate}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then(async (res) => {
         if (res.status === 401) {
           setToken(INVALID_TOKEN);
@@ -322,7 +283,9 @@ function MyApp() {
     }
 
     fetch(`${API_PREFIX}/entries`, {
-      headers: addAuthHeader()
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
       .then(async (res) => {
         if (res.status === 401) {
@@ -424,7 +387,7 @@ function MyApp() {
 
                 <HomeEditor
                   entry={selectedDateEntry}
-                  key={selectedDate}
+                  key={`${selectedDate}-${selectedDateEntry?._id ?? "empty"}`}
                   selectedDate={selectedDate}
                   onSave={saveSelectedDateEntry}
                 />
