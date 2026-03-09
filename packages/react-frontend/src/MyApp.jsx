@@ -349,11 +349,21 @@ function MyApp() {
         <div className="logo">Reflekt⭐️</div>
 
         <div className="nav-links">
-          <Link to="/login">Login</Link>
-          <Link to="/signup">Sign up</Link>
-          <Link to="/home">Home</Link>
-          <Link to="/calendar">Calendar</Link>
-          <Link to="/entries">All Entries</Link>
+          <Link data-cy="nav-login" to="/login">
+            Login
+          </Link>
+          <Link data-cy="nav-signup" to="/signup">
+            Sign up
+          </Link>
+          <Link data-cy="nav-home" to="/home">
+            Home
+          </Link>
+          <Link data-cy="nav-calendar" to="/calendar">
+            Calendar
+          </Link>
+          <Link data-cy="nav-all-entries" to="/entries">
+            All Entries
+          </Link>
         </div>
       </nav>
 
@@ -381,6 +391,7 @@ function MyApp() {
               <div className="left-panel">
                 <div className="date-navigation">
                   <button
+                    data-cy="prev-day-button"
                     type="button"
                     className="date-nav-button"
                     onClick={() => changeDateByDays(-1)}
@@ -393,6 +404,7 @@ function MyApp() {
                   </h1>
 
                   <button
+                    data-cy="next-day-button"
                     type="button"
                     className="date-nav-button"
                     onClick={() => changeDateByDays(1)}
@@ -401,6 +413,7 @@ function MyApp() {
                   </button>
 
                   <button
+                    data-cy="today-button"
                     type="button"
                     className="today-button"
                     onClick={() => setSelectedDate(getTodayDate())}
@@ -412,7 +425,6 @@ function MyApp() {
                 <HomeEditor
                   entry={selectedDateEntry}
                   key={selectedDate}
-                  handleSubmit={updateList}
                   selectedDate={selectedDate}
                   onSave={saveSelectedDateEntry}
                 />
