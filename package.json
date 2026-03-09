@@ -14,6 +14,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "cypress": "^15.11.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1"
   },

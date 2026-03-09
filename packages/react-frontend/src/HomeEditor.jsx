@@ -17,6 +17,7 @@ function HomeEditor({ entry, selectedDate, onSave }) {
     <div className="entry-form">
       <label htmlFor="home-editor-title">Title</label>
       <input
+        data-cy="home-editor-title"
         type="text"
         id="home-editor-title"
         value={title}
@@ -26,6 +27,7 @@ function HomeEditor({ entry, selectedDate, onSave }) {
 
       <label htmlFor="home-editor-body">Body</label>
       <textarea
+        data-cy="home-editor-body"
         id="home-editor-body"
         value={body}
         onChange={(e) => setBody(e.target.value)}
@@ -33,6 +35,7 @@ function HomeEditor({ entry, selectedDate, onSave }) {
       />
 
       <input
+        data-cy="home-editor-save"
         type="button"
         value="Save"
         onClick={handleSave}

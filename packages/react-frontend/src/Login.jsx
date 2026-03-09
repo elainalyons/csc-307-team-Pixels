@@ -10,6 +10,7 @@ function Login(props) {
     <form>
       <label htmlFor="username">UserName</label>
       <input
+        data-cy="login-username"
         type="text"
         name="username"
         id="username"
@@ -18,6 +19,7 @@ function Login(props) {
       />
       <label htmlFor="password">Password</label>
       <input
+        data-cy="login-password"
         type="password"
         name="password"
         id="password"
@@ -25,6 +27,7 @@ function Login(props) {
         onChange={handleChange}
       />
       <input
+        data-cy="login-submit"
         type="button"
         value={props.buttonLabel || "Log In"}
         onClick={submitForm}
