@@ -73,6 +73,34 @@ app.get("/entries", authenticateUser, async (req, res) => {
   }
 });
 
+// GET /entries/by-date/:date
+app.get(
+  "/entries/by-date/:date",
+  authenticateUser,
+  async (req, res) => {
+    try {
+      const owner = req.user.username;
+      const { date } = req.params;
+
+      const entry = await journalService.getEntryByDateForOwner(
+        date,
+        owner
+      );
+
+      if (!entry) {
+        return res.status(200).json({ entry: null });
+      }
+
+      return res.status(200).json({ entry });
+    } catch (error) {
+      console.error("GET /entries/by-date/:date error:", error);
+      return res
+        .status(500)
+        .send("An error occurred in the server.");
+    }
+  }
+);
+
 // POST /entries
 app.post("/entries", authenticateUser, async (req, res) => {
   try {
@@ -81,19 +109,22 @@ app.post("/entries", authenticateUser, async (req, res) => {
     console.log("body:", req.body);
 
     const { title, body, date } = req.body ?? {};
-    if (!title || !body || !date)
+    if (!title || !body || !date) {
       return res
         .status(400)
         .send("title and body and date are required.");
+    }
 
     const owner = req.user.username;
-    const saved = await journalService.createEntry({
-      title,
-      body,
-      date,
-      owner //attach journal to specific user
-    });
-    res.status(201).json(saved);
+    const saved =
+      await journalService.upsertEntryByDateForOwner({
+        title,
+        body,
+        date,
+        owner
+      });
+
+    res.status(200).json(saved);
   } catch (error) {
     console.error("POST /entries error:", error);
     console.error(error?.stack);
@@ -104,10 +135,13 @@ app.post("/entries", authenticateUser, async (req, res) => {
 app.get("/entries/:id", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
-    const entry = await journalService.deleteEntryByIdForOwner(
+    const owner = req.user.username;
+
+    const entry = await journalService.getEntryByIdForOwner(
       id,
       owner
     );
+
     if (!entry) return res.status(404).send("Entry not found.");
     return res.status(200).json(entry);
   } catch (error) {

@@ -2,37 +2,35 @@ import React, { useState } from "react";
 import "./NewEntryForm.css";
 
 function NewEntryForm(props) {
+  const getTodayDate = () => {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    const localDate = new Date(today.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().split("T")[0];
+  };
+
   const [entry, setEntry] = useState({
     title: "",
     body: "",
-    date: new Date()
+    date: props.selectedDate || getTodayDate()
   });
 
   function handleChange(event) {
     const { name, value } = event.target;
-    if (name === "body")
-      setEntry({
-        title: entry["title"],
-        body: value,
-        date: entry["date"]
-      });
-    else if (name === "title")
-      setEntry({
-        title: value,
-        body: entry["body"],
-        date: entry["date"]
-      });
-    else
-      setEntry({
-        title: entry["title"],
-        body: entry["body"],
-        date: value
-      });
+
+    setEntry({
+      ...entry,
+      [name]: value
+    });
   }
 
   function submitEntry() {
     props.handleSubmit(entry);
-    setEntry({ title: "", body: "", date: new Date() });
+    setEntry({
+      title: "",
+      body: "",
+      date: props.selectedDate || getTodayDate()
+    });
   }
 
   return (

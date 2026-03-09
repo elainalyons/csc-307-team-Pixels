@@ -9,7 +9,8 @@ import {
 } from "react-router-dom";
 import Calendar from "./Calendar";
 import Table from "./Table";
-import NewEntryForm from "./NewEntryForm";
+// import NewEntryForm from "./NewEntryForm";
+import HomeEditor from "./HomeEditor";
 import EntryModal from "./EntryModal";
 import EntryDetailsPage from "./EntryDetailsPage";
 import QuoteOfDay from "./QuoteOfDay";
@@ -28,35 +29,121 @@ function MyApp() {
   //   "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    const localDate = new Date(today.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().split("T")[0];
+  };
+  const [selectedDate, setSelectedDate] = useState(getTodayDate());
+
+  const [selectedDateEntry, setSelectedDateEntry] = useState(null);
+
   const [selectedEntryId, setSelectedEntryId] = useState(null);
   const selectedEntry = entries.find(
     (e) => e._id === selectedEntryId
   );
 
+  function changeDateByDays(days) {
+    const current = new Date(`${selectedDate}T12:00:00`);
+    current.setDate(current.getDate() + days);
+
+    const yyyy = current.getFullYear();
+    const mm = String(current.getMonth() + 1).padStart(2, "0");
+    const dd = String(current.getDate()).padStart(2, "0");
+
+    setSelectedDate(`${yyyy}-${mm}-${dd}`);
+  }
+
+  const formattedSelectedDate = new Date(
+    `${selectedDate}T00:00:00`
+  ).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  });
+
+  const displayDateLabel =
+    selectedDate === getTodayDate()
+      ? "Today"
+      : formattedSelectedDate;
+
+
   function updateList(entry) {
     postEntry(entry)
-      .then((res) => {
-        if (res.status === 201) return res.json();
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(await res.text());
+        }
+        return res.json();
       })
       .then((json) => {
-        setEntries((prevEntries) =>
-          [...prevEntries, json].sort(
+        setEntries((prevEntries) => {
+          const existingIndex = prevEntries.findIndex(
+            (e) => e._id === json._id
+          );
+
+          if (existingIndex !== -1) {
+            const updatedEntries = [...prevEntries];
+            updatedEntries[existingIndex] = json;
+            return updatedEntries.sort(
+              (a, b) =>
+                new Date(b.date || b.createdAt) -
+                new Date(a.date || a.createdAt)
+            );
+          }
+
+          return [...prevEntries, json].sort(
             (a, b) =>
               new Date(b.date || b.createdAt) -
               new Date(a.date || a.createdAt)
-          )
-        );
+          );
+        });
       })
       .catch((error) => {
         console.log(error);
       });
   }
 
-  function fetchEntries() {
-    return fetch(`${API_PREFIX}/entries`, {
-      headers: addAuthHeader()
-    });
+  function saveSelectedDateEntry(entry) {
+    postEntry(entry)
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(await res.text());
+        }
+        return res.json();
+      })
+      .then((savedEntry) => {
+        setSelectedDateEntry(savedEntry);
+
+        setEntries((prevEntries) => {
+          const existingIndex = prevEntries.findIndex(
+            (e) => e._id === savedEntry._id
+          );
+
+          if (existingIndex !== -1) {
+            const updatedEntries = [...prevEntries];
+            updatedEntries[existingIndex] = savedEntry;
+            return updatedEntries.sort(
+              (a, b) =>
+                new Date(b.date || b.createdAt) -
+                new Date(a.date || a.createdAt)
+            );
+          }
+
+          return [...prevEntries, savedEntry].sort(
+            (a, b) =>
+              new Date(b.date || b.createdAt) -
+              new Date(a.date || a.createdAt)
+          );
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        setMessage(`Save failed: ${error.message}`);
+      });
   }
+
 
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
@@ -65,6 +152,12 @@ function MyApp() {
         "Content-Type": "application/json"
       }),
       body: JSON.stringify(entry)
+    });
+  }
+
+  function fetchEntryByDate(date) {
+    return fetch(`${API_PREFIX}/entries/by-date/${date}`, {
+      headers: addAuthHeader()
     });
   }
 
@@ -197,14 +290,43 @@ function MyApp() {
       .catch((err) => console.log(err));
   }
 
-  //only get entries when token is valid
   useEffect(() => {
     if (token === INVALID_TOKEN) {
-      setEntries([]); // clear entries when logged out
+      setSelectedDateEntry(null);
       return;
     }
 
-    fetchEntries()
+    fetchEntryByDate(selectedDate)
+      .then(async (res) => {
+        if (res.status === 401) {
+          setToken(INVALID_TOKEN);
+          setMessage("Session expired. Please log in again.");
+          navigate("/login");
+          return null;
+        }
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      })
+      .then((json) => {
+        if (!json) return;
+        setSelectedDateEntry(json.entry);
+      })
+      .catch((error) => {
+        console.log(error);
+        setSelectedDateEntry(null);
+      });
+  }, [selectedDate, token, navigate]);
+
+  //only get entries when token is valid
+  useEffect(() => {
+    if (token === INVALID_TOKEN) {
+      setEntries([]);
+      return;
+    }
+
+    fetch(`${API_PREFIX}/entries`, {
+      headers: addAuthHeader()
+    })
       .then(async (res) => {
         if (res.status === 401) {
           setToken(INVALID_TOKEN);
@@ -260,7 +382,44 @@ function MyApp() {
           element={
             <div className="page-content">
               <div className="left-panel">
-                <NewEntryForm handleSubmit={updateList} />
+                <div className="date-navigation">
+                  <button
+                    type="button"
+                    className="date-nav-button"
+                    onClick={() => changeDateByDays(-1)}
+                  >
+                    ‹
+                  </button>
+
+                  <h1 className="date-navigation-label">
+                    {displayDateLabel}
+                  </h1>
+
+                  <button
+                    type="button"
+                    className="date-nav-button"
+                    onClick={() => changeDateByDays(1)}
+                  >
+                    ›
+                  </button>
+
+                  <button
+                    type="button"
+                    className="today-button"
+                    onClick={() => setSelectedDate(getTodayDate())}
+                  >
+                    Today
+                  </button>
+                </div>
+
+                <HomeEditor
+                  entry={selectedDateEntry}
+                  key={selectedDate}
+                  handleSubmit={updateList}
+                  selectedDate={selectedDate}
+                  onSave={saveSelectedDateEntry}
+                />
+
                 <h1>Previous Journal Entries</h1>
                 <Table
                   journalData={entries.slice(0, 3)}
