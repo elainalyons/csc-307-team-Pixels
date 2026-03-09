@@ -9,7 +9,8 @@ import {
 } from "react-router-dom";
 import Calendar from "./Calendar";
 import Table from "./Table";
-import NewEntryForm from "./NewEntryForm";
+// import NewEntryForm from "./NewEntryForm";
+import HomeEditor from "./HomeEditor";
 import EntryModal from "./EntryModal";
 import EntryDetailsPage from "./EntryDetailsPage";
 import "./MyApp.css";
@@ -32,6 +33,8 @@ function MyApp() {
     return localDate.toISOString().split("T")[0];
   };
   const [selectedDate, setSelectedDate] = useState(getTodayDate());
+
+  const [selectedDateEntry, setSelectedDateEntry] = useState(null);
 
   const [selectedEntryId, setSelectedEntryId] = useState(null);
   const selectedEntry = entries.find(
@@ -99,6 +102,45 @@ function MyApp() {
       });
   }
 
+  function saveSelectedDateEntry(entry) {
+    postEntry(entry)
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(await res.text());
+        }
+        return res.json();
+      })
+      .then((savedEntry) => {
+        setSelectedDateEntry(savedEntry);
+
+        setEntries((prevEntries) => {
+          const existingIndex = prevEntries.findIndex(
+            (e) => e._id === savedEntry._id
+          );
+
+          if (existingIndex !== -1) {
+            const updatedEntries = [...prevEntries];
+            updatedEntries[existingIndex] = savedEntry;
+            return updatedEntries.sort(
+              (a, b) =>
+                new Date(b.date || b.createdAt) -
+                new Date(a.date || a.createdAt)
+            );
+          }
+
+          return [...prevEntries, savedEntry].sort(
+            (a, b) =>
+              new Date(b.date || b.createdAt) -
+              new Date(a.date || a.createdAt)
+          );
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        setMessage(`Save failed: ${error.message}`);
+      });
+  }
+
 
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
@@ -107,6 +149,12 @@ function MyApp() {
         "Content-Type": "application/json"
       }),
       body: JSON.stringify(entry)
+    });
+  }
+
+  function fetchEntryByDate(date) {
+    return fetch(`${API_PREFIX}/entries/by-date/${date}`, {
+      headers: addAuthHeader()
     });
   }
 
@@ -239,6 +287,33 @@ function MyApp() {
       .catch((err) => console.log(err));
   }
 
+  useEffect(() => {
+    if (token === INVALID_TOKEN) {
+      setSelectedDateEntry(null);
+      return;
+    }
+
+    fetchEntryByDate(selectedDate)
+      .then(async (res) => {
+        if (res.status === 401) {
+          setToken(INVALID_TOKEN);
+          setMessage("Session expired. Please log in again.");
+          navigate("/login");
+          return null;
+        }
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      })
+      .then((json) => {
+        if (!json) return;
+        setSelectedDateEntry(json.entry);
+      })
+      .catch((error) => {
+        console.log(error);
+        setSelectedDateEntry(null);
+      });
+  }, [selectedDate, token, navigate]);
+
   //only get entries when token is valid
   useEffect(() => {
     if (token === INVALID_TOKEN) {
@@ -334,10 +409,12 @@ function MyApp() {
                   </button>
                 </div>
 
-                <NewEntryForm
+                <HomeEditor
+                  entry={selectedDateEntry}
                   key={selectedDate}
                   handleSubmit={updateList}
                   selectedDate={selectedDate}
+                  onSave={saveSelectedDateEntry}
                 />
 
                 <h1>Previous Journal Entries</h1>
