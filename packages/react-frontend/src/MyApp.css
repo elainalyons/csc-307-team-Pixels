@@ -93,6 +93,46 @@ nav a:hover {
   }
 }
 
+.quote-box {
+  background: light-dark(#ffffff, #2a2a2a);
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.quote-box h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 20px;
+}
+
+.quote-box p {
+  margin: 0;
+}
+
+.quote-author {
+  margin-top: 12px;
+  text-align: right;
+  font-weight: 600;
+  font-style: normal;
+  color: #ff4fa3;
+}
+
+.quote-button {
+  margin-top: 18px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #ff4fa3;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.quote-button:hover {
+  opacity: 0.9;
 .date-navigation {
   display: flex;
   align-items: center;

@@ -13,6 +13,7 @@ import Table from "./Table";
 import HomeEditor from "./HomeEditor";
 import EntryModal from "./EntryModal";
 import EntryDetailsPage from "./EntryDetailsPage";
+import QuoteOfDay from "./QuoteOfDay";
 import "./MyApp.css";
 import Login from "./Login";
 
@@ -22,8 +23,10 @@ function MyApp() {
   const [entries, setEntries] = useState([]);
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
-  const API_PREFIX =
-    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
+  const API_PREFIX = "http://localhost:8000";
+  // production
+  // const API_PREFIX =
+  //   "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
   const getTodayDate = () => {
@@ -421,7 +424,7 @@ function MyApp() {
                 )}
               </div>
               <div className="right-panel">
-                {/* Optional later: stats, filters, mood chart, etc. */}
+                <QuoteOfDay />
               </div>
             </div>
           }
