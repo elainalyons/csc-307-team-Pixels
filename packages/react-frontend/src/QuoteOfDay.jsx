@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 function QuoteOfDay() {
   const [quote, setQuote] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [maxedOut, setMaxedOut] = useState(false);
 
   const API_PREFIX = "http://localhost:8000"; // for local dev
@@ -36,8 +36,8 @@ function QuoteOfDay() {
 
   // get first quote when component loads
   useEffect(() => {
-    setLoading(true);
-    fetch(`${API_PREFIX}/quote`)
+    /*     setLoading(true);
+     */ fetch(`${API_PREFIX}/quote`)
       .then((res) => res.json())
       .then((data) => {
         setQuote(data);
