@@ -33,14 +33,26 @@ const port = 8000;
 
 app.use(
   cors({
-    origin: [
-      "https://witty-desert-068c7511e.6.azurestaticapps.net", // production frontend
-      "http://localhost:5173" // local dev frontend
-    ],
+    origin:
+      "https://witty-desert-068c7511e.6.azurestaticapps.net",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
+
+// // Respond to preflight OPTIONS requests
+// app.options("*", (req, res) => {
+//   res.header("Access-Control-Allow-Origin", allowedOrigin);
+//   res.header(
+//     "Access-Control-Allow-Methods",
+//     "GET,POST,PUT,DELETE,OPTIONS"
+//   );
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Content-Type,Authorization"
+//   );
+//   res.sendStatus(200); // immediately respond
+// });
 
 app.use(express.json());
 
@@ -237,31 +249,6 @@ app.use((err, req, res, next) => {
     .json({ error: err.message || "Server error" });
 });
 //----
-
-// fetching a quote
-app.get("/quote", async (req, res) => {
-  try {
-    const response = await fetch(
-      "https://zenquotes.io/api/random"
-    );
-    const data = await response.json();
-
-    // Check for ZenQuotes rate limit
-    if (data[0].q.includes("Too many requests")) {
-      console.log("Too many requests from ZenQuotes API");
-      return res
-        .status(429)
-        .json({ error: "Rate limit reached" });
-    }
-    // send formatted quote
-    res.json({
-      text: data[0].q,
-      author: data[0].a
-    });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch quote" });
-  }
-});
 
 app.listen(process.env.PORT || port, () => {
   console.log(console.log("REST API is listening."));
