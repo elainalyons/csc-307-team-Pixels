@@ -1,6 +1,6 @@
 // src/MyApp.jsx
 // can start frontend by running npm start from root directory of project
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Routes,
   Route,
@@ -13,9 +13,12 @@ import Table from "./Table";
 import HomeEditor from "./HomeEditor";
 import EntryModal from "./EntryModal";
 import EntryDetailsPage from "./EntryDetailsPage";
-import QuoteOfDay from "./QuoteOfDay";
 import "./MyApp.css";
 import Login from "./Login";
+import MoodSelector from "./MoodSelector";
+import DailyPhotos from "./DailyPhotos";
+import QuoteOfDay from "./QuoteOfDay";
+import settingIcon from "./assets/icons/settingIcon.svg";
 
 const INVALID_TOKEN = "INVALID_TOKEN";
 
@@ -23,26 +26,24 @@ function MyApp() {
   const [entries, setEntries] = useState([]);
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
-  const API_PREFIX = "http://localhost:8000";
-  // production
-  // const API_PREFIX =
-  //   "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
+  const API_PREFIX =
+    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
   const getTodayDate = () => {
     const today = new Date();
     const offset = today.getTimezoneOffset();
-    const localDate = new Date(today.getTime() - offset * 60 * 1000);
+    const localDate = new Date(
+      today.getTime() - offset * 60 * 1000
+    );
     return localDate.toISOString().split("T")[0];
   };
-  const [selectedDate, setSelectedDate] = useState(getTodayDate());
 
-  const [selectedDateEntry, setSelectedDateEntry] = useState(null);
+  const [selectedDateEntry, setSelectedDateEntry] =
+    useState(null);
 
-  const [selectedEntryId, setSelectedEntryId] = useState(null);
-  const selectedEntry = entries.find(
-    (e) => e._id === selectedEntryId
-  );
+  const [selectedDate, setSelectedDate] =
+    useState(getTodayDate());
 
   function changeDateByDays(days) {
     const current = new Date(`${selectedDate}T12:00:00`);
@@ -67,6 +68,113 @@ function MyApp() {
     selectedDate === getTodayDate()
       ? "Today"
       : formattedSelectedDate;
+
+  const [selectedEntryId, setSelectedEntryId] = useState(null);
+  const selectedEntry = entries.find(
+    (e) => e._id === selectedEntryId
+  );
+
+  //UI only for right now
+  const [selectedMood, setSelectedMood] = useState(null);
+  useEffect(() => {
+    setSelectedMood(null);
+  }, [selectedDate]);
+  //UI only for right now
+  const [photosByDate, setPhotosByDate] = useState({});
+  const [templatesByDate, setTemplatesByDate] = useState({});
+  const [photoModeByDate, setPhotoModeByDate] = useState({});
+
+  const photoMode = photoModeByDate[selectedDate] || "none";
+  const uploadPhotos = photosByDate[selectedDate] || [];
+  const selectedTemplates = templatesByDate[selectedDate] || [];
+
+  function addPhotosForSelectedDate(e) {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const urls = files.map((f) => URL.createObjectURL(f));
+
+    setPhotosByDate((prev) => {
+      const currentUploads = prev[selectedDate] || [];
+      const templateCount = (
+        templatesByDate[selectedDate] || []
+      ).length;
+
+      const roomLeft = Math.max(0, 4 - templateCount);
+      const next = [...currentUploads, ...urls].slice(
+        0,
+        roomLeft
+      );
+
+      const keptSet = new Set(next);
+      urls.forEach((u) => {
+        if (!keptSet.has(u)) URL.revokeObjectURL(u);
+      });
+
+      return { ...prev, [selectedDate]: next };
+    });
+
+    e.target.value = "";
+  }
+
+  function removePhotoForSelectedDate(index) {
+    setPhotosByDate((prev) => {
+      const current = prev[selectedDate] || [];
+      const toRemove = current[index];
+      if (toRemove) URL.revokeObjectURL(toRemove);
+
+      const next = current.filter((_, i) => i !== index);
+
+      // moves to clean, when user removes all pics
+      if (next.length === 0) {
+        setPhotoModeByDate((m) => ({
+          ...m,
+          [selectedDate]: "none"
+        }));
+      }
+
+      return { ...prev, [selectedDate]: next };
+    });
+  }
+
+  function toggleTemplateForSelectedDate(templateUrl) {
+    setTemplatesByDate((prev) => {
+      const current = prev[selectedDate] || [];
+      const exists = current.includes(templateUrl);
+
+      if (exists)
+        return {
+          ...prev,
+          [selectedDate]: current.filter(
+            (u) => u !== templateUrl
+          )
+        };
+
+      const uploadCount = (photosByDate[selectedDate] || [])
+        .length;
+      const total = current.length + uploadCount;
+
+      if (total >= 4) return prev;
+
+      return {
+        ...prev,
+        [selectedDate]: [...current, templateUrl]
+      };
+    });
+  }
+
+  function clearAllPhotosForSelectedDate() {
+    setPhotosByDate((prev) => {
+      (prev[selectedDate] || []).forEach((u) =>
+        URL.revokeObjectURL(u)
+      );
+      return { ...prev, [selectedDate]: [] };
+    });
+    setTemplatesByDate((prev) => ({
+      ...prev,
+      [selectedDate]: []
+    }));
+  }
 
   function saveSelectedDateEntry(entry) {
     postEntry(entry)
@@ -106,7 +214,6 @@ function MyApp() {
         setMessage(`Save failed: ${error.message}`);
       });
   }
-
 
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
@@ -309,6 +416,62 @@ function MyApp() {
       );
   }, [token, navigate]);
 
+  //right panel customization
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+
+  const [widgetsEnabled, setWidgetsEnabled] = useState({
+    quote: true,
+    mood: true,
+    photos: true
+  });
+
+  const [widgetOrder, setWidgetOrder] = useState([
+    "quote",
+    "mood",
+    "photos"
+  ]);
+
+  const toggleWidget = (key) =>
+    setWidgetsEnabled((prev) => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+
+  const moveWidget = (key, dir) => {
+    setWidgetOrder((prev) => {
+      const i = prev.indexOf(key);
+      if (i === -1) return prev;
+      const j = dir === "up" ? i - 1 : i + 1;
+      if (j < 0 || j >= prev.length) return prev;
+      const copy = [...prev];
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+      return copy;
+    });
+  };
+
+  const widgetMap = useMemo(
+    () => ({
+      quote: <QuoteOfDay apiPrefix={API_PREFIX} />,
+      mood: (
+        <MoodSelector
+          value={selectedMood}
+          onChange={setSelectedMood}
+        />
+      ),
+      photos: (
+        <DailyPhotos
+          uploadPhotos={uploadPhotos}
+          selectedTemplates={selectedTemplates}
+          onAddFiles={addPhotosForSelectedDate}
+          onRemoveUploadAtIndex={removePhotoForSelectedDate}
+          onToggleTemplate={toggleTemplateForSelectedDate}
+          onClearAll={clearAllPhotosForSelectedDate}
+        />
+      )
+    }),
+    [API_PREFIX, selectedMood, uploadPhotos, selectedTemplates]
+  );
+
   return (
     <div className="app-shell">
       <nav>
@@ -360,8 +523,7 @@ function MyApp() {
                     data-cy="prev-day-button"
                     type="button"
                     className="date-nav-button"
-                    onClick={() => changeDateByDays(-1)}
-                  >
+                    onClick={() => changeDateByDays(-1)}>
                     ‹
                   </button>
 
@@ -373,8 +535,7 @@ function MyApp() {
                     data-cy="next-day-button"
                     type="button"
                     className="date-nav-button"
-                    onClick={() => changeDateByDays(1)}
-                  >
+                    onClick={() => changeDateByDays(1)}>
                     ›
                   </button>
 
@@ -382,8 +543,9 @@ function MyApp() {
                     data-cy="today-button"
                     type="button"
                     className="today-button"
-                    onClick={() => setSelectedDate(getTodayDate())}
-                  >
+                    onClick={() =>
+                      setSelectedDate(getTodayDate())
+                    }>
                     Today
                   </button>
                 </div>
@@ -424,7 +586,80 @@ function MyApp() {
                 )}
               </div>
               <div className="right-panel">
-                <QuoteOfDay />
+                <div className="rightPanelHeader">
+                  <button
+                    type="button"
+                    className="customizeBtn"
+                    onClick={() => setCustomizeOpen((v) => !v)}
+                    aria-label="Customize sidebar"
+                    title="Customize">
+                    <img
+                      src={settingIcon}
+                      alt=""
+                      aria-hidden="true"
+                      className="customizeIcon"
+                    />
+                  </button>
+
+                  {customizeOpen && (
+                    <div
+                      className="customizePanel"
+                      onClick={(e) => e.stopPropagation()}>
+                      <h4 className="customizeTitle">
+                        Customize
+                      </h4>
+
+                      {widgetOrder.map((key, idx) => (
+                        <div className="customizeRow" key={key}>
+                          <label className="customizeLabel">
+                            <input
+                              type="checkbox"
+                              checked={!!widgetsEnabled[key]}
+                              onChange={() => toggleWidget(key)}
+                            />
+                            {key === "quote"
+                              ? "Quotes"
+                              : key === "mood"
+                                ? "Mood"
+                                : "Pictures"}
+                          </label>
+
+                          <div className="orderBtns">
+                            <button
+                              type="button"
+                              className="orderBtn"
+                              onClick={() =>
+                                moveWidget(key, "up")
+                              }
+                              disabled={idx === 0}
+                              title="Move up">
+                              ↑
+                            </button>
+                            <button
+                              type="button"
+                              className="orderBtn"
+                              onClick={() =>
+                                moveWidget(key, "down")
+                              }
+                              disabled={
+                                idx === widgetOrder.length - 1
+                              }
+                              title="Move down">
+                              ↓
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {widgetOrder.map((key) =>
+                  widgetsEnabled[key] ? (
+                    <div key={key} className="widgetBlock">
+                      {widgetMap[key]}
+                    </div>
+                  ) : null
+                )}
               </div>
             </div>
           }

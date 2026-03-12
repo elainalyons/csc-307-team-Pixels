@@ -1,0 +1,67 @@
+:root {
+  --mood-bg: #e7e7e7; /* light mode default circle */
+  --mood-border: rgba(0, 0, 0, 0.1);
+  --mood-icon-filter: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mood-bg: #323131;
+    --mood-border: rgba(255, 255, 255, 0.14);
+    --mood-icon-filter: invert(1); /* svg black to white */
+  }
+}
+.moodTitle {
+  font-family: serif;
+  font-size: 30px;
+  margin: 0 0 16px 0;
+}
+
+.moodRow {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.moodIcon {
+  width: 44px;
+  height: 44px;
+  display: block;
+  filter: var(--mood-icon-filter);
+}
+
+@media (prefers-color-scheme: dark) {
+  .moodIcon {
+    filter: invert(1);
+  }
+}
+
+.moodCircle {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px !important;
+
+  border: 1px solid var(--mood-border) !important;
+  background-color: var(--mood-bg);
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.moodCircle:hover {
+  transform: translateY(-2px);
+}
+
+.moodCircle[aria-pressed="true"] {
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
