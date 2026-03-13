@@ -13,13 +13,20 @@
 }
 .moodTitle {
   font-family: serif;
+  color: light-dark(#000000, #fffefe);
   font-size: 30px;
   margin: 0 0 16px 0;
 }
-
+.moodBlock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centers title + row */
+}
 .moodRow {
   display: flex;
   gap: 14px;
+  padding: 24px;
   align-items: center;
 }
 

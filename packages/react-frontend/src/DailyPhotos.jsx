@@ -6,7 +6,6 @@ import React, {
 } from "react";
 import "./DailyPhotos.css";
 import cameraIcon from "./assets/icons/cameraVec.svg";
-import settingIcon from "./assets/icons/settingIcon.svg";
 
 import t1 from "./assets/templates/template1.jpg";
 import t2 from "./assets/templates/template2.jpg";
@@ -192,7 +191,6 @@ export default function DailyPhotos({
               Clear
             </button>
 
-            {/* Template picker is inside the popover (temporary) */}
             {showTemplatePicker && (
               <div className="templatePicker">
                 {TEMPLATES.map((src, i) => {
