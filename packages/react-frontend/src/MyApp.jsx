@@ -28,8 +28,8 @@ function MyApp() {
   const [entries, setEntries] = useState([]);
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
-  const API_PREFIX =
-    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
+  const API_PREFIX = "http://localhost:8000";
+  //"https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
   /*   -------- Date Section  --------- */
@@ -98,6 +98,7 @@ function MyApp() {
   const [photosByDate, setPhotosByDate] = useState({});
   const [templatesByDate, setTemplatesByDate] = useState({});
   const [photoModeByDate, setPhotoModeByDate] = useState({});
+  const [showAuthModal, setShowAuthModal] = useState(false); // modal to prompt user to login to save their entry
 
   const uploadPhotos = photosByDate[selectedDate] || [];
   const selectedTemplates = templatesByDate[selectedDate] || [];
@@ -222,6 +223,7 @@ function MyApp() {
         });
       })
       .catch((error) => {
+        setShowAuthModal(true);
         console.log(error);
         setMessage(`Save failed: ${error.message}`);
       });
@@ -593,6 +595,35 @@ function MyApp() {
                   selectedDate={selectedDate}
                   onSave={saveSelectedDateEntry}
                 />
+
+                {showAuthModal && (
+                  <div className="modal-overlay">
+                    <div className="modal">
+                      <h2>Save Your Entry</h2>
+                      <p>
+                        You must create an account to save
+                        journal entries.
+                      </p>
+
+                      <div className="modal-buttons">
+                        <a href="/signup">
+                          <button>Sign Up</button>
+                        </a>
+
+                        <a href="/login">
+                          <button>Log In</button>
+                        </a>
+
+                        <button
+                          onClick={() =>
+                            setShowAuthModal(false)
+                          }>
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <h1>Previous Journal Entries</h1>
                 <Table
