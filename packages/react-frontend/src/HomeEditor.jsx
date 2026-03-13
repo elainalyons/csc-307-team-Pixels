@@ -39,6 +39,7 @@ function HomeEditor({ entry, selectedDate, onSave }) {
         type="button"
         value="Save"
         onClick={handleSave}
+        className="saveBtn"
       />
     </div>
   );

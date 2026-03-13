@@ -19,10 +19,11 @@
     border-color 140ms ease,
     box-shadow 140ms ease;
   min-height: 170px;
+  border-color: #008080;
 }
 
 .photosFrame:hover {
-  border-color: rgba(177, 85, 213, 0.7);
+  border-color: #008080;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
 }
 
@@ -150,14 +151,22 @@
 }
 
 .menuItem:hover {
-  background: rgba(255, 79, 163, 0.12) !important;
+  background: linear-gradient(
+    135deg,
+    #008080,
+    #20b2aa
+  ) !important;
+  color: white !important;
 }
 
 .menuItem.danger:hover {
-  background: rgba(211, 60, 64, 0.12) !important;
+  background: linear-gradient(
+    135deg,
+    #008080,
+    #20b2aa
+  ) !important;
 }
 
-/* Template picker appears only when chosen */
 .templatePicker {
   margin-top: 10px;
   display: grid;
@@ -175,7 +184,7 @@
 }
 
 .templateCard.selected {
-  border-color: #4fa4ff !important;
+  border-color: #a5dfe9 !important;
 }
 
 .templateCard:disabled {

@@ -19,8 +19,8 @@ export default function MoodSelector({ value, onChange }) {
 
   return (
     <section className="moodBlock">
-      <h2 className="moodTitle">How are you?</h2>
-
+      {/*       <h2 className="moodTitle">I'm feeling ___ today</h2>
+       */}
       <div
         className="moodRow"
         role="radiogroup"

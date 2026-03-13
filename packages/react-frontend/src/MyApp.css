@@ -1,81 +1,12 @@
-html,
-body {
-  font-family: "Lora", serif;
-}
-
 /* Whole page */
 .app-shell {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  /*   background-color: #f0f2f5;
- */
-}
-
-/* Left side takes most of the screen - Prev Journal Entries*/
-.left-panel {
-  width: 1000px; /* fixed width */
-  flex-shrink: 0; /* prevents shrinking */
-  padding: 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Optional right side */
-.right-panel {
-  margin-top: 80px;
-  margin-right: 1px; /* Current Issue: picture width chnages withe every px */
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* --- NAV BAR --- */
-
-nav {
-  display: flex;
-  gap: 24px;
-  padding: 18px 28px;
-  /*border-bottom: 1px solid #e5e5e5;  //Create the random line in cutting through prev. journal*/
-  background: light-dark(#ffffff, #414141);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-nav a {
-  text-decoration: none;
-  font-weight: 600;
-  color: light-dark(#797979, #ffffff);
-  font-size: 18px;
-}
-
-nav a:hover {
-  color: #ff4fa3;
-}
-
-.logo {
-  font-size: 22px;
-  font-weight: 700;
-  margin-right: auto;
-}
-
-.nav-links {
-  display: flex;
-  gap: 24px;
-}
-
-.page-content {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr;
-  gap: 32px;
-  padding: 24px 28px;
-  align-items: start;
 }
 
 .left-panel {
+  margin-top: 40px;
   width: auto;
   flex-shrink: 1;
   padding: 0;
@@ -88,6 +19,25 @@ nav a:hover {
 .left-panel h1 {
   margin: 0;
   margin-top: 8px;
+  color: light-dark(#000000, #ffffff);
+}
+
+/* Mood, Photos, Quotes */
+.right-panel {
+  margin-top: 0px;
+  margin-right: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-content {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 32px;
+  padding: 24px 28px;
+  align-items: start;
+  color: light-dark(#000000, #ffffff);
 }
 
 @media (max-width: 900px) {
@@ -95,17 +45,65 @@ nav a:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* --- NAV BAR --- */
+
+.logo {
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.logoImg {
+  height: 34px;
+  width: auto;
+  display: block;
+
+  transform: scale(3.2); /* VISUALLY bigger */
+  transform-origin: left center;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 30px 32px 18px;
+  background: light-dark(#ffffff, #414141);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  text-decoration: none;
+  font-weight: 600;
+  color: light-dark(#000000, #ffffff);
+  font-size: 21px;
+}
+
+nav a:hover {
+  color: light-dark(#008080, #20b2aa);
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+}
+
 .quote-box {
   background: light-dark(#ffffff, #2a2a2a);
   padding: 24px;
   border-radius: 14px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px
+    light-dark(rgba(0, 0, 0, 0.08), rgba(81, 81, 81, 0.55));
   font-style: italic;
   line-height: 1.6;
 }
 
 .quote-box h3 {
   margin-top: 0;
+  color: light-dark(#000000, #fffefe);
   margin-bottom: 12px;
   font-size: 20px;
 }
@@ -119,7 +117,7 @@ nav a:hover {
   text-align: right;
   font-weight: 600;
   font-style: normal;
-  color: #ff4fa3;
+  color: #20b2aa;
 }
 
 .quote-button {
@@ -127,21 +125,50 @@ nav a:hover {
   padding: 8px 14px;
   border: none;
   border-radius: 8px;
-  background: #ff4fa3;
+  background: linear-gradient(
+    135deg,
+    #008080,
+    #20b2aa
+  ) !important;
   color: white;
   font-weight: 600;
   cursor: pointer;
 }
 
 .quote-button:hover {
-  opacity: 0.9;
+  background: linear-gradient(
+    135deg,
+    #c4c4c4,
+    #747474
+  ) !important;
 }
 
 .date-navigation {
-  display: flex;
-  align-items: center;
+  width: 530px;
+  max-width: 100%;
+  margin: 0 auto 8px;
+  display: flex !important;
+  justify-content: center;
+}
+.date-navigation h1.date-navigation-label {
+  margin: 0 !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center!;
+  line-height: 1 !important;
+  padding: 0 !important;
+}
+
+.date-nav-group {
+  display: flex !important;
+  align-items: center !important;
   gap: 18px;
-  margin-bottom: 8px;
+}
+
+.date-navigation-label {
+  font-size: 35px;
+  font-weight: 700;
+  color: light-dark(#000000, #fffefe);
 }
 
 .date-nav-button {
@@ -151,8 +178,8 @@ nav a:hover {
   border: none;
   background: linear-gradient(
     135deg,
-    #ff4fa3,
-    #c03ad6
+    #008080,
+    #20b2aa
   ) !important;
   color: white !important;
   font-size: 26px;
@@ -166,16 +193,14 @@ nav a:hover {
 .date-nav-button:hover {
   background: linear-gradient(
     135deg,
-    #e84393,
-    #b030c8
+    #c4c4c4,
+    #747474
   ) !important;
 }
-
-.date-navigation-label {
-  font-size: 40px;
-  font-weight: 700;
-  color: #555;
-  margin: 0 8px;
+.date-nav-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .today-button {
@@ -185,8 +210,8 @@ nav a:hover {
   border: none;
   background: linear-gradient(
     135deg,
-    #ff4fa3,
-    #c03ad6
+    #008080,
+    #20b2aa
   ) !important;
   color: white !important;
   font-weight: 600;
@@ -197,18 +222,23 @@ nav a:hover {
 .today-button:hover {
   background: linear-gradient(
     135deg,
-    #e84393,
-    #b030c8
+    #c4c4c4,
+    #747474
   ) !important;
 }
 
-.date-navigation {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 18px;
+.entry-form {
+  width: 530px;
+  height: 530px;
+  max-width: 100%;
+  margin: 0 auto;
+  background: light-dark(#ffffff, #2a2a2a);
 }
+
+/*  ------Right Panel Below ------ */
+
 .rightPanelHeader {
+  margin-top: 0px;
   display: flex;
   justify-content: flex-end;
   position: relative;
@@ -224,8 +254,8 @@ nav a:hover {
 }
 
 .customizeIcon {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   display: block;
 }
 

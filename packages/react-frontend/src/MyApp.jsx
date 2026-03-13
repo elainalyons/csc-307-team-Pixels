@@ -19,6 +19,8 @@ import MoodSelector from "./MoodSelector";
 import DailyPhotos from "./DailyPhotos";
 import QuoteOfDay from "./QuoteOfDay";
 import settingIcon from "./assets/icons/settingIcon.svg";
+import logoLight from "./assets/logo/Reflekt-logo-yellow-bold.png";
+import logoDark from "./assets/logo/Reflekt-logo-darkmode.png";
 
 const INVALID_TOKEN = "INVALID_TOKEN";
 
@@ -29,6 +31,8 @@ function MyApp() {
   const API_PREFIX =
     "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
+
+  /*   -------- Date Section  --------- */
 
   const getTodayDate = () => {
     const today = new Date();
@@ -44,6 +48,9 @@ function MyApp() {
 
   const [selectedDate, setSelectedDate] =
     useState(getTodayDate());
+
+  const todayDate = getTodayDate();
+  const isToday = selectedDate === todayDate;
 
   function changeDateByDays(days) {
     const current = new Date(`${selectedDate}T12:00:00`);
@@ -74,17 +81,24 @@ function MyApp() {
     (e) => e._id === selectedEntryId
   );
 
+  /*   -------- End of Date Section  --------- */
+
+  /*   -------- Mood Section  --------- */
   //UI only for right now
+
   const [selectedMood, setSelectedMood] = useState(null);
   useEffect(() => {
     setSelectedMood(null);
   }, [selectedDate]);
-  //UI only for right now
+
+  /*   -------- ^^Mood Section^^  --------- */
+
+  /*   -------- Photos Section  --------- */ //UI only for right now
+
   const [photosByDate, setPhotosByDate] = useState({});
   const [templatesByDate, setTemplatesByDate] = useState({});
   const [photoModeByDate, setPhotoModeByDate] = useState({});
 
-  const photoMode = photoModeByDate[selectedDate] || "none";
   const uploadPhotos = photosByDate[selectedDate] || [];
   const selectedTemplates = templatesByDate[selectedDate] || [];
 
@@ -124,8 +138,6 @@ function MyApp() {
       if (toRemove) URL.revokeObjectURL(toRemove);
 
       const next = current.filter((_, i) => i !== index);
-
-      // moves to clean, when user removes all pics
       if (next.length === 0) {
         setPhotoModeByDate((m) => ({
           ...m,
@@ -214,6 +226,9 @@ function MyApp() {
         setMessage(`Save failed: ${error.message}`);
       });
   }
+  /*   -------- End of Photos Section  --------- */
+
+  /*   -------- Authentication Section  --------- */
 
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
@@ -416,7 +431,10 @@ function MyApp() {
       );
   }, [token, navigate]);
 
-  //right panel customization
+  /*   -------- End of Authentication Section  --------- */
+
+  /*   -------- Right Panel Customization Section  --------- */
+
   const [customizeOpen, setCustomizeOpen] = useState(false);
 
   const [widgetsEnabled, setWidgetsEnabled] = useState({
@@ -472,10 +490,24 @@ function MyApp() {
     [API_PREFIX, selectedMood, uploadPhotos, selectedTemplates]
   );
 
+  /*   -------- End of Right Panel Customization Section  --------- */
+
   return (
     <div className="app-shell">
       <nav>
-        <div className="logo">Reflekt⭐️</div>
+        <div className="logo">
+          <picture>
+            <source
+              srcSet={logoDark}
+              media="(prefers-color-scheme: dark)"
+            />
+            <img
+              src={logoLight}
+              alt="Reflekt"
+              className="logoImg"
+            />
+          </picture>
+        </div>
 
         <div className="nav-links">
           <Link data-cy="nav-login" to="/login">
@@ -485,7 +517,7 @@ function MyApp() {
             Sign up
           </Link>
           <Link data-cy="nav-home" to="/home">
-            Home
+            Today
           </Link>
           <Link data-cy="nav-calendar" to="/calendar">
             Calendar
@@ -519,35 +551,40 @@ function MyApp() {
             <div className="page-content">
               <div className="left-panel">
                 <div className="date-navigation">
-                  <button
-                    data-cy="prev-day-button"
-                    type="button"
-                    className="date-nav-button"
-                    onClick={() => changeDateByDays(-1)}>
-                    ‹
-                  </button>
+                  <div className="date-nav-group">
+                    <button
+                      type="button"
+                      className="date-nav-button"
+                      onClick={() => changeDateByDays(-1)}
+                      aria-label="Previous day">
+                      ‹
+                    </button>
 
-                  <h1 className="date-navigation-label">
-                    {displayDateLabel}
-                  </h1>
+                    <h1 className="date-navigation-label">
+                      {displayDateLabel}
+                    </h1>
 
-                  <button
-                    data-cy="next-day-button"
-                    type="button"
-                    className="date-nav-button"
-                    onClick={() => changeDateByDays(1)}>
-                    ›
-                  </button>
+                    {!isToday && (
+                      <>
+                        <button
+                          type="button"
+                          className="date-nav-button"
+                          onClick={() => changeDateByDays(1)}
+                          aria-label="Next day">
+                          ›
+                        </button>
 
-                  <button
-                    data-cy="today-button"
-                    type="button"
-                    className="today-button"
-                    onClick={() =>
-                      setSelectedDate(getTodayDate())
-                    }>
-                    Today
-                  </button>
+                        <button
+                          type="button"
+                          className="today-button"
+                          onClick={() =>
+                            setSelectedDate(todayDate)
+                          }>
+                          Today
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <HomeEditor
@@ -568,9 +605,10 @@ function MyApp() {
                   to="/entries"
                   style={{
                     display: "inline-block",
-                    marginTop: 12,
+                    marginTop: 15,
                     padding: "10px 16px",
-                    background: "#ff4fa3",
+                    background:
+                      "linear-gradient(135deg, #008080, #20b2aa)",
                     color: "white",
                     borderRadius: 8,
                     textDecoration: "none",
