@@ -840,9 +840,9 @@ button,
 [type="image"] {
   -webkit-appearance: none;
   display: inline-block;
-  border: 1px solid #0366ee;
+  border: 1px solid #008080;
   border-radius: 4px;
-  background: #0366ee;
+  background: #20b2aa;
   color: #ffffff;
   font-weight: 600;
   font-family:
@@ -871,8 +871,8 @@ button:hover,
 [type="button"]:hover,
 [type="image"]:hover {
   border: 1px solid
-    rgb(2.3651452282, 80.4149377593, 187.6348547718);
-  background: rgb(2.3651452282, 80.4149377593, 187.6348547718);
+     rgba(0, 0, 0, 0.1);
+  background:     rgba(255, 255, 255, 0.16);
   color: #ffffff;
   text-decoration: none;
 }
@@ -890,13 +890,7 @@ button:active,
 [type="button"]:focus,
 [type="button"]:active,
 [type="image"]:focus,
-[type="image"]:active {
-  border: 1px solid
-    rgb(2.3651452282, 80.4149377593, 187.6348547718);
-  background: rgb(2.3651452282, 80.4149377593, 187.6348547718);
-  color: #ffffff;
-  text-decoration: none;
-}
+[type="image"]:active 
 
 .button::-moz-focus-inner,
 a.button::-moz-focus-inner,
