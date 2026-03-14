@@ -154,7 +154,7 @@ nav a:hover {
   margin: 0 !important;
   height: 48px !important;
   display: flex !important;
-  align-items: center!;
+  align-items: center !important;
   line-height: 1 !important;
   padding: 0 !important;
 }
@@ -345,4 +345,38 @@ nav a:hover {
 
 .widgetBlock {
   margin-top: 12px;
+}
+
+.body-cell {
+  vertical-align: top;
+}
+
+.entry-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.authNavBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #008080, #20b2aa) !important;
+  color: white !important;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+.authNavBtn:hover {
+  background: linear-gradient(135deg, #c4c4c4, #747474) !important;
+  color: white !important;
 }

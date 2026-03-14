@@ -106,7 +106,7 @@ function TableBody(props) {
           )}
         </td>
 
-        <td>
+        <td className="body-cell">
           {editingId === row._id ? (
             <textarea
               value={draft.body}
@@ -120,9 +120,9 @@ function TableBody(props) {
               rows={2}
             />
           ) : (
-            row.body
+            <div className="entry-preview">{row.body}</div>
           )}
-        </td>
+      </td>
 
         <td>
           {editingId === row._id ? (
@@ -205,7 +205,7 @@ function TableBody(props) {
                       startEdit(row);
                     }}
                     style={{
-                      background: "#ff4fa3",
+                      background: "#20b2aa",
                       color: "white",
                       border: "none",
                       padding: "8px 10px",
@@ -224,7 +224,7 @@ function TableBody(props) {
                       props.onDelete(row._id);
                     }}
                     style={{
-                      background: "#ff4fa3",
+                      background: "#20b2aa",
                       color: "white",
                       border: "none",
                       padding: "8px 10px",
