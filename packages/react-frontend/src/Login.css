@@ -57,7 +57,11 @@
   padding: 12px 20px;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, #008080, #20b2aa) !important;
+  background: linear-gradient(
+    135deg,
+    #008080,
+    #20b2aa
+  ) !important;
   color: white !important;
   font-weight: 700;
   font-size: 16px;
@@ -65,7 +69,11 @@
 }
 
 .auth-submit-btn:hover {
-  background: linear-gradient(135deg, #c4c4c4, #747474) !important;
+  background: linear-gradient(
+    135deg,
+    #c4c4c4,
+    #747474
+  ) !important;
 }
 
 .auth-switch-text {
@@ -73,6 +81,7 @@
   text-align: center;
   color: light-dark(#333333, #f2f2f2);
   font-size: 15px;
+  margin: 4px 0;
 }
 
 .auth-switch-link {

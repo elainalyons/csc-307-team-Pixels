@@ -5,7 +5,8 @@ import "./Login.css";
 function Login({
   handleSubmit,
   buttonLabel = "Login",
-  message = ""
+  message = "",
+  setShowNavLinks
 }) {
   const [formData, setFormData] = useState({
     username: "",
@@ -55,6 +56,18 @@ function Login({
           <button type="submit" className="auth-submit-btn">
             {buttonLabel}
           </button>
+
+          {isSignup && (
+            <p className="auth-switch-text">
+              Want to try it first?{" "}
+              <Link
+                to="/home"
+                className="auth-switch-link"
+                onClick={() => setShowNavLinks?.(true)}>
+                Continue as guest
+              </Link>
+            </p>
+          )}
         </form>
 
         {!isSignup ? (
