@@ -29,9 +29,8 @@ function MyApp() {
   const [entries, setEntries] = useState([]);
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
-  const API_PREFIX =
-    //"http://localhost:8000"
-    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
+  const API_PREFIX = "http://localhost:8000";
+  //"https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
   /*   -------- Date Section  --------- */
@@ -82,14 +81,15 @@ function MyApp() {
   const selectedEntry = entries.find(
     (e) => e._id === selectedEntryId
   );
-/*   -------- logout  --------- */
+  /*   -------- logout  --------- */
 
   function logoutUser() {
-  setToken(INVALID_TOKEN);
-  setEntries([]);
-  setSelectedDateEntry(null);
-  navigate("/login");
-}
+    setToken(INVALID_TOKEN);
+    setEntries([]);
+    setSelectedDateEntry(null);
+    setShowNavLinks(false);
+    navigate("/login");
+  }
 
   /*   -------- End of Date Section  --------- */
 
@@ -108,6 +108,9 @@ function MyApp() {
   const [photosByDate, setPhotosByDate] = useState({});
   const [templatesByDate, setTemplatesByDate] = useState({});
   const [photoModeByDate, setPhotoModeByDate] = useState({});
+
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [pendingEntry, setPendingEntry] = useState(null);
 
   const uploadPhotos = photosByDate[selectedDate] || [];
   const selectedTemplates = templatesByDate[selectedDate] || [];
@@ -198,7 +201,22 @@ function MyApp() {
     }));
   }
 
+  function goToLogin() {
+    setShowLoginPrompt(false);
+    navigate("/login");
+  }
+
+  function continueEditing() {
+    setShowLoginPrompt(false);
+  }
+
   function saveSelectedDateEntry(entry) {
+    if (token === INVALID_TOKEN) {
+      setPendingEntry(entry);
+      setShowLoginPrompt(true);
+      return;
+    }
+
     postEntry(entry)
       .then(async (res) => {
         if (!res.ok) {
@@ -239,7 +257,7 @@ function MyApp() {
   /*   -------- End of Photos Section  --------- */
 
   /*   -------- Authentication Section  --------- */
-
+  const [showNavLinks, setShowNavLinks] = useState(false);
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
       method: "POST",
@@ -306,6 +324,7 @@ function MyApp() {
       // expect { token: "..." }
       setToken(body.token);
       setMessage("Login successful;");
+      setShowNavLinks(true);
       navigate("/home");
       return true;
     } catch (err) {
@@ -441,6 +460,15 @@ function MyApp() {
       );
   }, [token, navigate]);
 
+  /* -------- AUTO SAVE AFTER LOGIN -------- */
+
+  useEffect(() => {
+    if (token !== INVALID_TOKEN && pendingEntry) {
+      saveSelectedDateEntry(pendingEntry);
+      setPendingEntry(null);
+    }
+  }, [token, pendingEntry]);
+
   /*   -------- End of Authentication Section  --------- */
 
   /*   -------- Right Panel Customization Section  --------- */
@@ -518,43 +546,50 @@ function MyApp() {
             />
           </picture>
         </div>
-       {/* ------------- NAVIGATION TOP BAR  */} 
-        <div className="nav-links">
-          <Link data-cy="nav-home" to="/home">
-            Today
-          </Link> 
-           <Link data-cy="nav-all-entries" to="/entries">
-            All Entries
-          </Link>
-          <Link data-cy="nav-calendar" to="/calendar">
-            Calendar
-          </Link>
+        {/* ------------- NAVIGATION TOP BAR  */}
+        {showNavLinks && (
+          <div className="nav-links">
+            <Link data-cy="nav-home" to="/home">
+              Today
+            </Link>
+            <Link data-cy="nav-all-entries" to="/entries">
+              All Entries
+            </Link>
+            <Link data-cy="nav-calendar" to="/calendar">
+              Calendar
+            </Link>
             {token === INVALID_TOKEN ? (
               <Link
                 data-cy="nav-login"
                 to="/login"
-                className="authNavBtn"
-              >
+                className="authNavBtn">
                 Login
               </Link>
             ) : (
               <button
                 className="authNavBtn"
-                onClick={logoutUser}
-              >
+                onClick={logoutUser}>
                 Logout
               </button>
             )}
-            </div>
+          </div>
+        )}
       </nav>
 
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/"
+          element={<Navigate to="/login" replace />}
+        />
 
         <Route
           path="/login"
           element={
-            <Login handleSubmit={loginUser} message={message} />
+            <Login
+              handleSubmit={loginUser}
+              message={message}
+              setShowNavLinks={setShowNavLinks}
+            />
           }
         />
         <Route
@@ -564,6 +599,7 @@ function MyApp() {
               handleSubmit={signupUser}
               buttonLabel="Sign Up"
               message={message}
+              setShowNavLinks={setShowNavLinks}
             />
           }
         />
@@ -615,6 +651,31 @@ function MyApp() {
                   selectedDate={selectedDate}
                   onSave={saveSelectedDateEntry}
                 />
+
+                {showLoginPrompt && (
+                  <div className="loginPromptOverlay">
+                    <div className="loginPromptModal">
+                      <h2>Login to Save</h2>
+                      <p>
+                        You need an account to save your journal
+                        entry.
+                      </p>
+
+                      <div className="loginPromptButtons">
+                        <button
+                          onClick={() => {
+                            goToLogin();
+                            setShowNavLinks(false);
+                          }}>
+                          Login
+                        </button>
+                        <button onClick={continueEditing}>
+                          Continue Editing
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <h1>Previous Journal Entries</h1>
                 <Table
