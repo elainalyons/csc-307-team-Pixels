@@ -5,6 +5,7 @@ import {
   Routes,
   Route,
   Link,
+  Navigate,
   useNavigate
 } from "react-router-dom";
 import Calendar from "./Calendar";
@@ -29,6 +30,7 @@ function MyApp() {
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
   const API_PREFIX =
+    //"http://localhost:8000"
     "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
@@ -80,6 +82,14 @@ function MyApp() {
   const selectedEntry = entries.find(
     (e) => e._id === selectedEntryId
   );
+/*   -------- logout  --------- */
+
+  function logoutUser() {
+  setToken(INVALID_TOKEN);
+  setEntries([]);
+  setSelectedDateEntry(null);
+  navigate("/login");
+}
 
   /*   -------- End of Date Section  --------- */
 
@@ -295,7 +305,7 @@ function MyApp() {
 
       // expect { token: "..." }
       setToken(body.token);
-      setMessage("Login successful; auth token saved");
+      setMessage("Login successful;");
       navigate("/home");
       return true;
     } catch (err) {
@@ -508,27 +518,39 @@ function MyApp() {
             />
           </picture>
         </div>
-
+       {/* ------------- NAVIGATION TOP BAR  */} 
         <div className="nav-links">
-          <Link data-cy="nav-login" to="/login">
-            Login
-          </Link>
-          <Link data-cy="nav-signup" to="/signup">
-            Sign up
-          </Link>
           <Link data-cy="nav-home" to="/home">
             Today
+          </Link> 
+           <Link data-cy="nav-all-entries" to="/entries">
+            All Entries
           </Link>
           <Link data-cy="nav-calendar" to="/calendar">
             Calendar
           </Link>
-          <Link data-cy="nav-all-entries" to="/entries">
-            All Entries
-          </Link>
-        </div>
+            {token === INVALID_TOKEN ? (
+              <Link
+                data-cy="nav-login"
+                to="/login"
+                className="authNavBtn"
+              >
+                Login
+              </Link>
+            ) : (
+              <button
+                className="authNavBtn"
+                onClick={logoutUser}
+              >
+                Logout
+              </button>
+            )}
+            </div>
       </nav>
 
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         <Route
           path="/login"
           element={

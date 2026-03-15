@@ -1,58 +1,82 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "./Login.css";
 
-function Login(props) {
-  const [creds, setCreds] = useState({
+function Login({
+  handleSubmit,
+  buttonLabel = "Login",
+  message = ""
+}) {
+  const [formData, setFormData] = useState({
     username: "",
     password: ""
   });
 
+  function handleChange(e) {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  }
+
+  function onSubmit(e) {
+    e.preventDefault();
+    handleSubmit(formData);
+  }
+
+  const isSignup = buttonLabel === "Sign Up";
+
   return (
-    <form>
-      <label htmlFor="username">UserName</label>
-      <input
-        data-cy="login-username"
-        type="text"
-        name="username"
-        id="username"
-        value={creds.username}
-        onChange={handleChange}
-      />
-      <label htmlFor="password">Password</label>
-      <input
-        data-cy="login-password"
-        type="password"
-        name="password"
-        id="password"
-        value={creds.password}
-        onChange={handleChange}
-      />
-      <input
-        data-cy="login-submit"
-        type="button"
-        value={props.buttonLabel || "Log In"}
-        onClick={submitForm}
-      />
-      {props.message && <p>{props.message}</p>} 
-      {/* return error message*/}
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">
+          {isSignup ? "Create Account" : "Welcome Back"}
+        </h1>
 
-    </form>
+        <form className="auth-form" onSubmit={onSubmit}>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+            className="auth-input"
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="auth-input"
+          />
+
+          <button type="submit" className="auth-submit-btn">
+            {buttonLabel}
+          </button>
+        </form>
+
+        {!isSignup ? (
+          <p className="auth-switch-text">
+            Don&apos;t have a password?{" "}
+            <Link to="/signup" className="auth-switch-link">
+              Sign Up
+            </Link>
+          </p>
+        ) : (
+          <p className="auth-switch-text">
+            Already have an account?{" "}
+            <Link to="/login" className="auth-switch-link">
+              Login
+            </Link>
+          </p>
+        )}
+
+        {message && <p className="auth-message">{message}</p>}
+      </div>
+    </div>
   );
-
-  function handleChange(event) {
-    const { name, value } = event.target;
-    switch (name) {
-      case "username":
-        setCreds({ ...creds, username: value });
-        break;
-      case "password":
-        setCreds({ ...creds, password: value });
-        break;
-    }
-  }
-
-  function submitForm() {
-    props.handleSubmit(creds);
-    setCreds({ username: "", password: "" });
-  }
 }
+
 export default Login;
