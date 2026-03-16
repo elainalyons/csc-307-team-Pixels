@@ -51,10 +51,11 @@ function MyApp() {
   const [entries, setEntries] = useState([]);
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
-  const API_PREFIX = "http://localhost:8000";
-  //"https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
+  const API_PREFIX = //"http://localhost:8000";
+    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
+  const [showNavLinks, setShowNavLinks] = useState(false);
   /*   -------- Date Section  --------- */
 
   const getTodayDate = () => {
@@ -107,14 +108,6 @@ function MyApp() {
   /* -------  Widgets Save per Day--------  */
   const initial = useMemo(() => loadWidgetState(), []);
   /*   -------- logout  --------- */
-
-  function logoutUser() {
-    setToken(INVALID_TOKEN);
-    setEntries([]);
-    setSelectedDateEntry(null);
-    setShowNavLinks(false);
-    navigate("/login");
-  }
 
   const [moodByDate, setMoodByDate] = useState(
     () => initial.moodByDate || {}
@@ -309,7 +302,6 @@ function MyApp() {
   /*   -------- End of Photos Section  --------- */
 
   /*   -------- Authentication Section  --------- */
-  const [showNavLinks, setShowNavLinks] = useState(false);
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
       method: "POST",
@@ -617,8 +609,8 @@ function MyApp() {
               Today
             </Link>
             <Link data-cy="nav-all-entries" to="/entries">
-          History
-          </Link>
+              History
+            </Link>
             <Link data-cy="nav-calendar" to="/calendar">
               Calendar
             </Link>
