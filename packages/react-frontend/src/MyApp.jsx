@@ -106,6 +106,15 @@ function MyApp() {
 
   /* -------  Widgets Save per Day--------  */
   const initial = useMemo(() => loadWidgetState(), []);
+  /*   -------- logout  --------- */
+
+  function logoutUser() {
+    setToken(INVALID_TOKEN);
+    setEntries([]);
+    setSelectedDateEntry(null);
+    setShowNavLinks(false);
+    navigate("/login");
+  }
 
   const [moodByDate, setMoodByDate] = useState(
     () => initial.moodByDate || {}
@@ -145,6 +154,9 @@ function MyApp() {
   };
 
   // photos
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [pendingEntry, setPendingEntry] = useState(null);
+
   const uploadPhotos = photosByDate[selectedDate] || [];
   const selectedTemplates = templatesByDate[selectedDate] || [];
 
@@ -241,7 +253,22 @@ function MyApp() {
     }));
   }
 
+  function goToLogin() {
+    setShowLoginPrompt(false);
+    navigate("/login");
+  }
+
+  function continueEditing() {
+    setShowLoginPrompt(false);
+  }
+
   function saveSelectedDateEntry(entry) {
+    if (token === INVALID_TOKEN) {
+      setPendingEntry(entry);
+      setShowLoginPrompt(true);
+      return;
+    }
+
     postEntry(entry)
       .then(async (res) => {
         if (!res.ok) {
@@ -282,7 +309,7 @@ function MyApp() {
   /*   -------- End of Photos Section  --------- */
 
   /*   -------- Authentication Section  --------- */
-
+  const [showNavLinks, setShowNavLinks] = useState(false);
   function postEntry(entry) {
     return fetch(`${API_PREFIX}/entries`, {
       method: "POST",
@@ -349,6 +376,7 @@ function MyApp() {
       // expect { token: "..." }
       setToken(body.token);
       setMessage("Login successful;");
+      setShowNavLinks(true);
       navigate("/home");
       return true;
     } catch (err) {
@@ -484,6 +512,15 @@ function MyApp() {
       );
   }, [token, navigate]);
 
+  /* -------- AUTO SAVE AFTER LOGIN -------- */
+
+  useEffect(() => {
+    if (token !== INVALID_TOKEN && pendingEntry) {
+      saveSelectedDateEntry(pendingEntry);
+      setPendingEntry(null);
+    }
+  }, [token, pendingEntry]);
+
   /*   -------- End of Authentication Section  --------- */
 
   /*   -------- Right Panel Customization Section  --------- */
@@ -574,29 +611,33 @@ function MyApp() {
           </picture>
         </div>
         {/* ------------- NAVIGATION TOP BAR  */}
-        <div className="nav-links">
-          <Link data-cy="nav-home" to="/home">
-            Home
-          </Link>
-          <Link data-cy="nav-all-entries" to="/entries">
-            History
-          </Link>
-          <Link data-cy="nav-calendar" to="/calendar">
-            Calendar
-          </Link>
-          {token === INVALID_TOKEN ? (
-            <Link
-              data-cy="nav-login"
-              to="/login"
-              className="authNavBtn">
-              Login
+        {showNavLinks && (
+          <div className="nav-links">
+            <Link data-cy="nav-home" to="/home">
+              Today
             </Link>
-          ) : (
-            <button className="authNavBtn" onClick={logoutUser}>
-              Logout
-            </button>
-          )}
-        </div>
+            <Link data-cy="nav-all-entries" to="/entries">
+          History
+          </Link>
+            <Link data-cy="nav-calendar" to="/calendar">
+              Calendar
+            </Link>
+            {token === INVALID_TOKEN ? (
+              <Link
+                data-cy="nav-login"
+                to="/login"
+                className="authNavBtn">
+                Login
+              </Link>
+            ) : (
+              <button
+                className="authNavBtn"
+                onClick={logoutUser}>
+                Logout
+              </button>
+            )}
+          </div>
+        )}
       </nav>
 
       <Routes>
@@ -608,7 +649,11 @@ function MyApp() {
         <Route
           path="/login"
           element={
-            <Login handleSubmit={loginUser} message={message} />
+            <Login
+              handleSubmit={loginUser}
+              message={message}
+              setShowNavLinks={setShowNavLinks}
+            />
           }
         />
         <Route
@@ -618,6 +663,7 @@ function MyApp() {
               handleSubmit={signupUser}
               buttonLabel="Sign Up"
               message={message}
+              setShowNavLinks={setShowNavLinks}
             />
           }
         />
@@ -669,6 +715,31 @@ function MyApp() {
                   selectedDate={selectedDate}
                   onSave={saveSelectedDateEntry}
                 />
+
+                {showLoginPrompt && (
+                  <div className="loginPromptOverlay">
+                    <div className="loginPromptModal">
+                      <h2>Login to Save</h2>
+                      <p>
+                        You need an account to save your journal
+                        entry.
+                      </p>
+
+                      <div className="loginPromptButtons">
+                        <button
+                          onClick={() => {
+                            goToLogin();
+                            setShowNavLinks(false);
+                          }}>
+                          Login
+                        </button>
+                        <button onClick={continueEditing}>
+                          Continue Editing
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <h1>Previous Journal Entries</h1>
                 <Table

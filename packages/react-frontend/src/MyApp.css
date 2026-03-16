@@ -408,4 +408,39 @@ nav a:hover {
 .tablePage {
   padding: 0 18px;
   color: light-dark(#000000, #fffefe);
+  color: white !important;
+}
+
+.loginPromptOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loginPromptModal {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+}
+
+.loginPromptButtons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.loginPromptButtons button:hover {
+  background: #1e9b99; /* slightly darker teal */
+  transform: translateY(-2px); /* lifts the button */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* subtle shadow */
 }
