@@ -95,7 +95,7 @@ export default function DailyPhotos({
 
       {/* Clickable frame */}
       <div
-        className={`photosFrame ${hasPhotos ? "hasPhotos" : ""}`}
+        className={`photosFrame ${hasPhotos ? "hasPhotos" : "isEmpty"}`}
         role="button"
         tabIndex={0}
         aria-label="Pictures"
@@ -135,9 +135,6 @@ export default function DailyPhotos({
                     alt="Daily"
                   />
 
-                  {/* remove on hover:
-                      - templates remove by toggling template
-                      - uploads remove by upload index */}
                   <button
                     type="button"
                     className="photoRemove"

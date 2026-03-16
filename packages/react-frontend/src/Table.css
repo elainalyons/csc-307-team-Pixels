@@ -1,0 +1,120 @@
+.tableRoot {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tableActionsHeader {
+  width: 90px;
+  text-align: right;
+}
+
+.tableActionsCell {
+  text-align: right;
+  position: relative;
+  padding-right: 25px !important;
+  padding-left: 0px !important;
+}
+
+.tableField {
+  width: 100%;
+  font-family: inherit;
+  color: light-dark(#000000, #ffffff);
+
+  font-size: 1rem;
+}
+
+/* The ⋯ button (EXACT values from your inline style) */
+.tableDotsBtn {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  border: 1px solid #ddd !important;
+  background: linear-gradient(
+    135deg,
+    #008080,
+    #20b2aa
+  ) !important;
+  cursor: pointer !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-size: 18px !important;
+  font-weight: bold !important;
+  line-height: 0 !important;
+  color: #fff !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+/* The dropdown menu (EXACT values from inline style) */
+.tableMenu {
+  position: absolute;
+  right: 0;
+  top: 40px;
+
+  background: white;
+  border-radius: 10px;
+  padding: 8px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  z-index: 10;
+  min-width: 140px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.tableMenuBtn {
+  background: linear-gradient(
+    135deg,
+    #008080,
+    #20b2aa
+  ) !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 10px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+
+  margin: 0 !important;
+  width: 100%;
+  text-align: left;
+}
+.tableRowClickable {
+  cursor: pointer;
+}
+.tableRowClickable:hover td {
+  background: rgba(0, 0, 0, 0.03);
+}
+.tableInlineBtn {
+  background: linear-gradient(
+    135deg,
+    #008080,
+    #20b2aa
+  ) !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 10px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  min-width: 90px;
+  text-align: center;
+  padding: 8px 12px;
+}
+
+.tableInlineBtnCancel {
+  margin: 0 !important;
+}
+
+.tableRoot th,
+.tableRoot td {
+  vertical-align: top;
+  padding: 12px 14px;
+}

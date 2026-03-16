@@ -19,12 +19,14 @@
 .left-panel h1 {
   margin: 0;
   margin-top: 8px;
+  margin-left: 25px;
   color: light-dark(#000000, #ffffff);
+  text-align: left;
 }
 
 /* Mood, Photos, Quotes */
 .right-panel {
-  margin-top: 0px;
+  margin-top: 35px;
   margin-right: 1px;
   display: flex;
   flex-direction: column;
@@ -60,7 +62,7 @@
   width: auto;
   display: block;
 
-  transform: scale(3.2); /* VISUALLY bigger */
+  transform: scale(3.2);
   transform-origin: left center;
 }
 
@@ -88,9 +90,11 @@ nav a:hover {
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: 24px;
 }
 
+/*------ Quote Section ------*/
 .quote-box {
   background: light-dark(#ffffff, #2a2a2a);
   padding: 24px;
@@ -123,7 +127,7 @@ nav a:hover {
 .quote-button {
   margin-top: 18px;
   padding: 8px 14px;
-  border: none;
+  border: none !important;
   border-radius: 8px;
   background: linear-gradient(
     135deg,
@@ -141,6 +145,7 @@ nav a:hover {
     #c4c4c4,
     #747474
   ) !important;
+  border: none !important;
 }
 
 .date-navigation {
@@ -150,6 +155,7 @@ nav a:hover {
   display: flex !important;
   justify-content: center;
 }
+
 .date-navigation h1.date-navigation-label {
   margin: 0 !important;
   height: 48px !important;
@@ -175,7 +181,7 @@ nav a:hover {
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  border: none;
+  border: none !important;
   background: linear-gradient(
     135deg,
     #008080,
@@ -207,7 +213,7 @@ nav a:hover {
   margin-left: 12px;
   padding: 10px 18px;
   border-radius: 12px;
-  border: none;
+  border: none !important;
   background: linear-gradient(
     135deg,
     #008080,
@@ -298,9 +304,18 @@ nav a:hover {
 .customizeLabel {
   display: flex;
   align-items: center;
+  color: light-dark(#282828, #ffffff);
   gap: 8px;
   font-weight: 600;
   font-size: 13px;
+}
+
+.customizeCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #20b2aa;
+  cursor: pointer;
+  color: light-dark(#ffffff, #000000);
 }
 
 .orderBtns {
@@ -332,6 +347,7 @@ nav a:hover {
   box-shadow: none !important;
   padding: 0 !important;
 }
+
 .orderBtn:hover {
   background: light-dark(
     rgba(0, 0, 0, 0.1),
@@ -366,7 +382,7 @@ nav a:hover {
   align-items: center;
   justify-content: center;
   padding: 10px 18px;
-  border: none;
+  border: 2px solid light-dark(#008080, #20b2aa) !important;
   border-radius: 12px;
   background: linear-gradient(
     135deg,
@@ -375,7 +391,7 @@ nav a:hover {
   ) !important;
   color: white !important;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 20px;
   text-decoration: none !important;
   cursor: pointer;
 }
@@ -386,6 +402,12 @@ nav a:hover {
     #c4c4c4,
     #747474
   ) !important;
+  border-color: #ffffff !important; /* only change the color */
+}
+
+.tablePage {
+  padding: 0 18px;
+  color: light-dark(#000000, #fffefe);
   color: white !important;
 }
 
