@@ -33,8 +33,9 @@ const port = 8000;
 
 app.use(
   cors({
-    origin:
-      "https://witty-desert-068c7511e.6.azurestaticapps.net",
+    origin:[
+      "http://localhost:5173",
+      "https://witty-desert-068c7511e.6.azurestaticapps.net"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
@@ -51,6 +52,10 @@ app.use((req, res, next) => {
 //---
 
 app.get("/", (req, res) => res.send("Hello World!"));
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 app.post("/signup", registerUser);
 app.post("/login", loginUser);
