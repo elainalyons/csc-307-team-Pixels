@@ -42,6 +42,7 @@ function Login({
             value={formData.username}
             onChange={handleChange}
             className="auth-input"
+            data-cy="login-username"
           />
 
           <input
@@ -51,9 +52,13 @@ function Login({
             value={formData.password}
             onChange={handleChange}
             className="auth-input"
+            data-cy="login-password"
           />
 
-          <button type="submit" className="auth-submit-btn">
+          <button
+            type="submit"
+            className="auth-submit-btn"
+            data-cy="login-submit">
             {buttonLabel}
           </button>
 

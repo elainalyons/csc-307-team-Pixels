@@ -51,7 +51,7 @@ function MyApp() {
   const [entries, setEntries] = useState([]);
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
-  const API_PREFIX = //"http://localhost:8000";
+  const API_PREFIX = // "http://localhost:8000"
     "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
@@ -617,6 +617,7 @@ function MyApp() {
             ) : (
               <button
                 className="authNavBtn"
+                data-cy="nav-logout"
                 onClick={logoutUser}>
                 Logout
               </button>

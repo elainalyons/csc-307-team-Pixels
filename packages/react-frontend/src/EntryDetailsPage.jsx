@@ -49,12 +49,17 @@ export default function EntryDetailsPage({ apiPrefix, token }) {
 
   return (
     <div className="entryDetailsPage">
-      <Link to="/entries" className="entryDetailsBack">
+      <Link to="/entries" className="entryDetailsBack"
+        data-cy="entry-details-back">
         ← Back
       </Link>
 
       <div className="entryDetailsCard">
-        <h1 className="entryDetailsTitle">{entry.title}</h1>
+        <h1
+          className="entryDetailsTitle"
+          data-cy="entry-details-title">
+          {entry.title}
+        </h1>
 
         <div className="entryDetailsMeta">
           {new Date(
@@ -62,7 +67,11 @@ export default function EntryDetailsPage({ apiPrefix, token }) {
           ).toLocaleDateString()}
         </div>
 
-        <p className="entryDetailsBody">{entry.body}</p>
+        <p
+          className="entryDetailsBody"
+          data-cy="entry-details-body">
+          {entry.body}
+        </p>
       </div>
     </div>
   );
