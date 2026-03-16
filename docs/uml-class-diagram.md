@@ -61,8 +61,13 @@ These features were removed to focus on the core journaling functionality.
 
 ## Diagram Source Files
 
-The original UML diagrams were created in FigJam.
+The UML diagrams were originally created in FigJam/Figma.
 
-The editable export of the diagram is stored here:
+The repository includes exported diagram images here:
 
-docs/diagrams/uml-diagram-source.html
+- `docs/images/current-uml.png`
+- `docs/images/original-uml.png`
+
+A note about the original editing source is included here:
+
+- `docs/diagrams/README.md`
