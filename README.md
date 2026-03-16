@@ -1,7 +1,7 @@
 This repository will have the frontend and backend code for my
 app for CSC 307.
 
-Project Blurb
+# Project Blurb
 
 Reflekt is a web-based journaling application designed to help
 users capture and reflect on their daily experiences in a simple
@@ -19,12 +19,12 @@ UI Prototype
 
 <video src="CSC-307-TEAM-PIXELS/mid-fi_Prototype.mov" width="320" height="240" controls></video>
 
-Development Environment Setup
+# Development Environment Setup
 
 The following instructions describe how to set up the Reflekt
 development environment locally.
 
-Prerequisites
+## Prerequisites
 
 Before starting, make sure the following software is installed:
 
@@ -39,9 +39,9 @@ https://www.mongodb.com
 
 VS Code (recommended editor) https://code.visualstudio.com
 
-1. Clone the Repository
+## 1. Clone the Repository
 
-2. Install Dependencies
+## 2. Install Dependencies
 
 Install backend dependencies:
 
@@ -51,7 +51,7 @@ Install frontend dependencies:
 
 cd ../frontend npm install
 
-3. Configure Environment Variables
+## 3. Configure Environment Variables
 
 Create a .env file inside the backend directory.
 
@@ -63,7 +63,7 @@ TOKEN_SECRET=your_secret_key
 These variables configure the backend server and database
 connection.
 
-4. Start the Backend Server
+## 4. Start the Backend Server
 
 From the backend directory:
 
@@ -73,7 +73,7 @@ The backend API should start on:
 
 http://localhost:8000
 
-5. Start the Frontend
+## 5. Start the Frontend
 
 Open a new terminal and navigate to the frontend directory:
 
@@ -83,7 +83,7 @@ The React development server will start on:
 
 http://localhost:5173
 
-6. Running the Application
+## 6. Running the Application
 
 Once both servers are running:
 
@@ -91,8 +91,17 @@ Backend API → http://localhost:8000
 
 Frontend app → http://localhost:5173
 
-Open the frontend URL in a browser to access the Reflekt journal
-application.
+Open the frontend URL in a browser to access the Reflekt journal application.
+
+# Architecture Documentation
+
+Project architecture documentation can be found in the `docs` folder.
+
+- [Architecture Overview](docs/architecture.md)
+- [UML Class Diagram](docs/uml-class-diagram.md)
+
+
+
 
 https://www.websequencediagrams.com/?png=msc543954272&filename=Exported.png<img width="947" height="748" alt="image" src="https://github.com/user-attachments/assets/08d5dd5d-e90a-4fad-aad5-e26bf602a312" />
 
