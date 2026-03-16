@@ -867,7 +867,8 @@ function MyApp() {
             </div>
           }
         />
-        <Route path="/calendar"
+        <Route
+          path="/calendar"
           element={
             <Calendar
               CalendarData={entries}
