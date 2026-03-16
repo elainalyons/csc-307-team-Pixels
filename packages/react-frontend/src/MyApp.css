@@ -375,6 +375,7 @@ nav a:hover {
   overflow: hidden;
   word-break: break-word;
   line-height: 1.4;
+  color: light-dark(#000000, #ffffff);
 }
 
 .authNavBtn {
