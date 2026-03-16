@@ -94,6 +94,7 @@ nav a:hover {
   gap: 24px;
 }
 
+/*------ Quote Section ------*/
 .quote-box {
   background: light-dark(#ffffff, #2a2a2a);
   padding: 24px;
