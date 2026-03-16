@@ -40,15 +40,13 @@ function Calendar({
     return map;
   }, [CalendarData]);
 
-  const sortedEntries = useMemo(() => {
-    return [...CalendarData]
-      .filter((entry) => entry?.date)
-      .sort(
-        (a, b) =>
-          new Date(b.date || b.createdAt) -
-          new Date(a.date || a.createdAt)
-      );
-  }, [CalendarData]);
+  const sortedEntries = [...CalendarData]
+    .filter((entry) => entry?.date)
+    .sort(
+      (a, b) =>
+        new Date(b.date || b.createdAt) -
+        new Date(a.date || a.createdAt)
+    );
 
   const latestEntryDate =
     sortedEntries.length > 0
@@ -58,7 +56,11 @@ function Calendar({
   const [currentMonth, setCurrentMonth] = useState(() => {
     if (sortedEntries.length > 0) {
       const latest = new Date(sortedEntries[0].date);
-      return new Date(latest.getFullYear(), latest.getMonth(), 1);
+      return new Date(
+        latest.getFullYear(),
+        latest.getMonth(),
+        1
+      );
     }
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
@@ -72,6 +74,7 @@ function Calendar({
   useEffect(() => {
     if (selectedDate) {
       const picked = new Date(`${selectedDate}T12:00:00`);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentMonth(
         new Date(picked.getFullYear(), picked.getMonth(), 1)
       );
@@ -189,8 +192,7 @@ function Calendar({
             className="calendar-arrow"
             data-cy="calendar-prev-month"
             onClick={previousMonth}
-            aria-label="Previous month"
-          >
+            aria-label="Previous month">
             ←
           </button>
 
@@ -205,8 +207,7 @@ function Calendar({
             className="calendar-arrow"
             data-cy="calendar-next-month"
             onClick={nextMonth}
-            aria-label="Next month"
-          >
+            aria-label="Next month">
             →
           </button>
         </div>
@@ -229,11 +230,16 @@ function Calendar({
                 type="button"
                 data-cy={`calendar-day-${cell.dateString}`}
                 className={`calendar-day-box ${
-                  selectedDate === cell.dateString ? "selected" : ""
+                  selectedDate === cell.dateString
+                    ? "selected"
+                    : ""
                 }`}
-                onClick={() => handleSelectDate(cell.dateString)}
-              >
-                <div className="calendar-day-number">{cell.day}</div>
+                onClick={() =>
+                  handleSelectDate(cell.dateString)
+                }>
+                <div className="calendar-day-number">
+                  {cell.day}
+                </div>
 
                 {cell.entries.length > 0 && (
                   <div className="calendar-entry-title">

@@ -542,7 +542,7 @@ function logoutUser() {
       saveSelectedDateEntry(pendingEntry);
       setPendingEntry(null);
     }
-  }, [token, pendingEntry]);
+  }, [token, pendingEntry, saveSelectedDateEntry]);
 
   /*   -------- End of Authentication Section  --------- */
 
@@ -611,7 +611,18 @@ function logoutUser() {
         />
       )
     }),
-    [API_PREFIX, selectedMood, uploadPhotos, selectedTemplates]
+    [
+      addPhotosForSelectedDate,
+      clearAllPhotosForSelectedDate,
+      quoteByDate,
+      removePhotoForSelectedDate,
+      selectedDate,
+      setSelectedMood,
+      toggleTemplateForSelectedDate,
+      selectedMood,
+      uploadPhotos,
+      selectedTemplates
+    ]
   );
 
   /*   -------- End of Right Panel Customization Section  --------- */
@@ -873,7 +884,8 @@ function logoutUser() {
             </div>
           }
         />
-        <Route path="/calendar"
+        <Route
+          path="/calendar"
           element={
             <Calendar
               CalendarData={entries}
