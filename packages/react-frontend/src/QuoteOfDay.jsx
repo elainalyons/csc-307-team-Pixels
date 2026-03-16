@@ -4,7 +4,8 @@ export default function QuoteOfDay({
   savedQuote,
   onSaveQuote
 }) {
-  const API_PREFIX = "http://localhost:8000";
+  const API_PREFIX = //"http://localhost:8000";
+    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
 
   const [quote, setQuote] = useState(() => savedQuote ?? null);
   const [loading, setLoading] = useState(() => !savedQuote);
