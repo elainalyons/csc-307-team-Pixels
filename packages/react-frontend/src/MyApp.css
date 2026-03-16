@@ -62,7 +62,7 @@
   width: auto;
   display: block;
 
-  transform: scale(3.2); /* VISUALLY bigger */
+  transform: scale(3.2);
   transform-origin: left center;
 }
 
@@ -361,7 +361,7 @@ nav a:hover {
 .widgetBlock {
   margin-top: 12px;
 }
-/* Myah edits */
+
 .body-cell {
   vertical-align: top;
 }
@@ -404,7 +404,6 @@ nav a:hover {
   border-color: #ffffff !important; /* only change the color */
 }
 
-/* My edits Stashed */
 .tablePage {
   padding: 0 18px;
   color: light-dark(#000000, #fffefe);
