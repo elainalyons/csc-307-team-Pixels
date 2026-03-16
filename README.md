@@ -133,9 +133,17 @@ This ensures that the full frontend + backend workflow functions correctly.
 
 ### Running the Test
 
-Start the application from the root directory:
+### Start the application
 
+Start the backend server:
+
+cd packages/express-backend
 npm start
+
+Start the frontend dev server:
+
+cd packages/react-frontend
+npm run dev
 
 Then open Cypress in a second terminal:
 
