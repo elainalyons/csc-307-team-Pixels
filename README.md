@@ -15,6 +15,9 @@ built using a React frontend, an Express/Node.js backend, and
 MongoDB for data storage, following a RESTful API architecture
 and modular code structure.
 
+Link to app https://witty-desert-068c7511e.6.azurestaticapps.net/
+demo video https://drive.google.com/file/d/1QPLdtCu0qw3J8hW20EYXweIVGR_uocKd/view?usp=sharing
+
 UI Prototype
 
 <video src="CSC-307-TEAM-PIXELS/mid-fi_Prototype.mov" width="320" height="240" controls></video>
