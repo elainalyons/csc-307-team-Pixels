@@ -72,7 +72,7 @@ npm start
 
 The React development server will start on:
 
-http://localhost:3000
+http://localhost:5173
 
 6. Running the Application
 
@@ -80,7 +80,7 @@ Once both servers are running:
 
 Backend API → http://localhost:8000
 
-Frontend app → http://localhost:3000
+Frontend app → http://localhost:5173
 
 Open the frontend URL in a browser to access the Reflekt journal application.
 
