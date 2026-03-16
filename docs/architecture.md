@@ -53,7 +53,12 @@ The implementation follows a modular architecture with clear separation between 
 └── README.md
 ```
 
+### Module Organization
+
+The project uses JavaScript ES module `import` and `export` statements to organize functionality across files. This allows different parts of the system (models, services, frontend components, and backend routes) to be developed and maintained independently while keeping clear module boundaries.
+
 ---
+
 
 # Package Responsibilities
 
@@ -156,6 +161,21 @@ At a high level, the API supports:
 * deleting entries
 
 ---
+
+### RESTful API Design
+
+The backend follows RESTful API design principles where endpoints represent resources (nouns) rather than actions (verbs). HTTP methods are used to indicate the operation performed on each resource.
+
+Example API endpoints include:
+
+- `POST /users/register` – create a new user
+- `POST /users/login` – authenticate a user
+- `GET /entries` – retrieve journal entries
+- `POST /entries` – create a new journal entry
+- `PUT /entries/:id` – update an existing entry
+- `DELETE /entries/:id` – delete an entry
+
+This structure keeps the API consistent and easy to understand.
 
 # Design Evolution
 
