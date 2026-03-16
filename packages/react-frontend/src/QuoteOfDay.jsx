@@ -42,9 +42,13 @@ export default function QuoteOfDay({
   }, [onSaveQuote]);
 
   useEffect(() => {
-    if (!savedQuote) {
-      getQuote();
+    async function fetchQuote() {
+      if (!savedQuote) {
+        await getQuote();
+      }
     }
+
+    fetchQuote();
   }, [savedQuote, getQuote]);
 
   return (

@@ -536,7 +536,7 @@ function MyApp() {
       saveSelectedDateEntry(pendingEntry);
       setPendingEntry(null);
     }
-  }, [token, pendingEntry]);
+  }, [token, pendingEntry, saveSelectedDateEntry]);
 
   /*   -------- End of Authentication Section  --------- */
 
@@ -605,7 +605,18 @@ function MyApp() {
         />
       )
     }),
-    [API_PREFIX, selectedMood, uploadPhotos, selectedTemplates]
+    [
+      addPhotosForSelectedDate,
+      clearAllPhotosForSelectedDate,
+      quoteByDate,
+      removePhotoForSelectedDate,
+      selectedDate,
+      setSelectedMood,
+      toggleTemplateForSelectedDate,
+      selectedMood,
+      uploadPhotos,
+      selectedTemplates
+    ]
   );
 
   /*   -------- End of Right Panel Customization Section  --------- */
