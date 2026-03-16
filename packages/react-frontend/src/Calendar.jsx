@@ -74,11 +74,11 @@ function Calendar({
   useEffect(() => {
     if (selectedDate) {
       const picked = new Date(`${selectedDate}T12:00:00`);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentMonth(
         new Date(picked.getFullYear(), picked.getMonth(), 1)
       );
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
   }, [selectedDate]);
 
   const calendarDays = useMemo(() => {
