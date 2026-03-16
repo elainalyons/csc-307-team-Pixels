@@ -140,12 +140,6 @@ function MyApp() {
     }));
   };
 
-  //quote
-  const quoteForDate = quoteByDate[selectedDate] ?? null;
-  const setQuoteForDate = (q) => {
-    setQuoteByDate((prev) => ({ ...prev, [selectedDate]: q }));
-  };
-
   // photos
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [pendingEntry, setPendingEntry] = useState(null);

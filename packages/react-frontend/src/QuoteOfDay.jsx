@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function QuoteOfDay({
-  apiPrefix,
-  savedQuote,
-  onSaveQuote,
-  dateKey
-}) {
+function QuoteOfDay({ savedQuote, onSaveQuote, dateKey }) {
   const [quote, setQuote] = useState(savedQuote ?? null);
   const [loading, setLoading] = useState(true);
   const [maxedOut, setMaxedOut] = useState(false);
