@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import "./Calendar.css";
 
 function Calendar({ CalendarData = [] }) {
@@ -23,15 +23,13 @@ function Calendar({ CalendarData = [] }) {
     return map;
   }, [CalendarData]);
 
-  const sortedEntries = useMemo(() => {
-    return [...CalendarData]
-      .filter((entry) => entry?.date)
-      .sort(
-        (a, b) =>
-          new Date(b.date || b.createdAt) -
-          new Date(a.date || a.createdAt)
-      );
-  }, [CalendarData]);
+  const sortedEntries = [...CalendarData]
+    .filter((entry) => entry?.date)
+    .sort(
+      (a, b) =>
+        new Date(b.date || b.createdAt) -
+        new Date(a.date || a.createdAt)
+    );
 
   const latestEntryDate =
     sortedEntries.length > 0
@@ -41,16 +39,23 @@ function Calendar({ CalendarData = [] }) {
   const [currentMonth, setCurrentMonth] = useState(() => {
     if (sortedEntries.length > 0) {
       const latest = new Date(sortedEntries[0].date);
-      return new Date(latest.getFullYear(), latest.getMonth(), 1);
+      return new Date(
+        latest.getFullYear(),
+        latest.getMonth(),
+        1
+      );
     }
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
 
-  const [selectedDate, setSelectedDate] = useState(latestEntryDate);
+  const [selectedDate, setSelectedDate] =
+    useState(latestEntryDate);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (sortedEntries.length > 0) {
-      const newestDate = normalizeDateString(sortedEntries[0].date);
+      const newestDate = normalizeDateString(
+        sortedEntries[0].date
+      );
       setSelectedDate(newestDate);
 
       const newest = new Date(sortedEntries[0].date);
@@ -58,7 +63,7 @@ function Calendar({ CalendarData = [] }) {
         new Date(newest.getFullYear(), newest.getMonth(), 1)
       );
     }
-  }, [sortedEntries]);
+  }, [sortedEntries]); */
 
   const calendarDays = useMemo(() => {
     const year = currentMonth.getFullYear();
@@ -128,8 +133,7 @@ function Calendar({ CalendarData = [] }) {
             type="button"
             className="calendar-arrow"
             onClick={previousMonth}
-            aria-label="Previous month"
-          >
+            aria-label="Previous month">
             ←
           </button>
 
@@ -139,8 +143,7 @@ function Calendar({ CalendarData = [] }) {
             type="button"
             className="calendar-arrow"
             onClick={nextMonth}
-            aria-label="Next month"
-          >
+            aria-label="Next month">
             →
           </button>
         </div>
@@ -162,11 +165,16 @@ function Calendar({ CalendarData = [] }) {
                 key={cell.dateString}
                 type="button"
                 className={`calendar-day-box ${
-                  selectedDate === cell.dateString ? "selected" : ""
+                  selectedDate === cell.dateString
+                    ? "selected"
+                    : ""
                 }`}
-                onClick={() => handleSelectDate(cell.dateString)}
-              >
-                <div className="calendar-day-number">{cell.day}</div>
+                onClick={() =>
+                  handleSelectDate(cell.dateString)
+                }>
+                <div className="calendar-day-number">
+                  {cell.day}
+                </div>
 
                 {cell.entries.length > 0 && (
                   <div className="calendar-entry-title">
@@ -186,14 +194,13 @@ function Calendar({ CalendarData = [] }) {
 
       <aside className="calendar-details">
         <h2 className="calendar-details-date">
-          {new Date(`${selectedDate}T00:00:00`).toLocaleDateString(
-            "en-US",
-            {
-              month: "long",
-              day: "numeric",
-              year: "numeric"
-            }
-          )}
+          {new Date(
+            `${selectedDate}T00:00:00`
+          ).toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+          })}
         </h2>
 
         {!selectedEntry ? (

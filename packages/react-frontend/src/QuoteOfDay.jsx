@@ -1,68 +1,53 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 
-function QuoteOfDay({ savedQuote, onSaveQuote, dateKey }) {
-  const [quote, setQuote] = useState(savedQuote ?? null);
-  const [loading, setLoading] = useState(true);
+export default function QuoteOfDay({
+  savedQuote,
+  onSaveQuote
+}) {
+  const API_PREFIX = "http://localhost:8000";
+
+  const [quote, setQuote] = useState(() => savedQuote ?? null);
+  const [loading, setLoading] = useState(() => !savedQuote);
   const [maxedOut, setMaxedOut] = useState(false);
 
-  const API_PREFIX = "http://localhost:8000"; // for local dev
-
-  function getQuote() {
+  const getQuote = useCallback(() => {
     setLoading(true);
     setMaxedOut(false);
-    // get new quote if limit hasn't been reached (5 quote per 30 seconds)
+
     fetch(`${API_PREFIX}/quote`)
-      .then((res) => {
+      .then(async (res) => {
         if (!res.ok) {
-          return res.json().then((data) => {
-            console.log(data.error); // too many requests
-            setMaxedOut(true);
-            setLoading(false);
-          });
+          setMaxedOut(true);
+          setLoading(false);
+          return null;
         }
         return res.json();
       })
       .then((data) => {
-        if (data) {
-          setQuote(data);
-          onSaveQuote?.(data);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+        if (!data) return;
+        setQuote(data);
+        onSaveQuote?.(data);
         setLoading(false);
-      });
-  }
-
-  // get first quote when component loads
-  useEffect(() => {
-    if (savedQuote) {
-      setQuote(savedQuote);
-      setLoading(false);
-      setMaxedOut(false);
-      return;
-    }
-    getQuote();
-  }, [dateKey]);
+      })
+      .catch(() => setLoading(false));
+  }, [onSaveQuote]);
 
   return (
     <div className="quote-box">
-      {quote && (
+      {quote ? (
         <>
           <p>"{quote.text}"</p>
           <p className="quote-author">— {quote.author}</p>
         </>
+      ) : (
+        <p>{loading ? "Loading..." : "No quote yet."}</p>
       )}
 
-      {loading && <p>Loading...</p>}
       {maxedOut && <p>Wait to refresh</p>}
 
       <button className="quote-button" onClick={getQuote}>
-        New Quote
+        {quote ? "New Quote" : "Load Quote"}
       </button>
     </div>
   );
 }
-
-export default QuoteOfDay;
