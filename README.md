@@ -19,7 +19,7 @@ Link to app https://witty-desert-068c7511e.6.azurestaticapps.net/
 
 demo video https://drive.google.com/file/d/1QPLdtCu0qw3J8hW20EYXweIVGR_uocKd/view?usp=sharing
 
-UI Prototype
+UI Prototype https://www.figma.com/board/KnbPbkewg3EMxg9EJwa31j/UML-diagram--Copy-?node-id=0-1&t=xSpA1cFNtlIosgA5-1
 
 <video src="CSC-307-TEAM-PIXELS/mid-fi_Prototype.mov" width="320" height="240" controls></video>
 
