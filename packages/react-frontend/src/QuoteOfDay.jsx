@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-function QuoteOfDay() {
-  const [quote, setQuote] = useState(null);
+function QuoteOfDay({
+  apiPrefix,
+  savedQuote,
+  onSaveQuote,
+  dateKey
+}) {
+  const [quote, setQuote] = useState(savedQuote ?? null);
   const [loading, setLoading] = useState(true);
   const [maxedOut, setMaxedOut] = useState(false);
 
@@ -24,7 +29,8 @@ function QuoteOfDay() {
       })
       .then((data) => {
         if (data) {
-          setQuote(data); // formatted in backend
+          setQuote(data);
+          onSaveQuote?.(data);
           setLoading(false);
         }
       })
@@ -36,23 +42,17 @@ function QuoteOfDay() {
 
   // get first quote when component loads
   useEffect(() => {
-    /*     setLoading(true);
-     */ fetch(`${API_PREFIX}/quote`)
-      .then((res) => res.json())
-      .then((data) => {
-        setQuote(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  }, []);
+    if (savedQuote) {
+      setQuote(savedQuote);
+      setLoading(false);
+      setMaxedOut(false);
+      return;
+    }
+    getQuote();
+  }, [dateKey]);
 
   return (
     <div className="quote-box">
-      <h3>Quote of the Day</h3>
-
       {quote && (
         <>
           <p>"{quote.text}"</p>

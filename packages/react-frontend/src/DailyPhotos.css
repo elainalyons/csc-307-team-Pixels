@@ -19,12 +19,10 @@
     border-color 140ms ease,
     box-shadow 140ms ease;
   min-height: 170px;
-  border-color: #008080;
 }
 
-.photosFrame:hover {
+.photosFrame.isEmpty {
   border-color: #008080;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
 }
 
 .photosEmpty {
@@ -38,22 +36,16 @@
     opacity 140ms ease,
     transform 140ms ease;
 }
-
-.photosFrame:hover .photosEmpty {
-  opacity: 0.8;
-  transform: translateY(0);
+.photosFrame.hasPhotos,
+.photosFrame.hasPhotos:hover {
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .cameraIcon {
   width: 60px;
   height: 60px;
   opacity: 0.8;
-}
-
-.photosEmptyText {
-  font-family: serif;
-  font-size: 22px;
-  font-weight: 600;
 }
 
 .photosGrid {

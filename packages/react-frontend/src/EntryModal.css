@@ -1,0 +1,64 @@
+:root {
+  --modal-bg: #ffffff;
+  --modal-fg: #1f1f1f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --modal-bg: #414141;
+    --modal-fg: #ffffff;
+  }
+}
+
+.entryModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+.entryModalContent {
+  width: min(900px, 95vw);
+  max-height: 85vh;
+  overflow: auto;
+  background: var(--modal-bg);
+  color: var(--modal-fg);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.entryModalHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.closeBtn {
+  background: linear-gradient(
+    135deg,
+    #008080,
+    #20b2aa
+  ) !important;
+  border: none !important;
+}
+.closeBtn:hover {
+  background: linear-gradient(
+    135deg,
+    #c4c4c4,
+    #747474
+  ) !important;
+  border: none !important;
+}
+.entryModalTitle {
+  margin: 0;
+}
+
+.entryModalBody {
+  white-space: pre-wrap;
+  margin-top: 12px;
+}

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import "./Table.css";
+
 function TableHeader() {
   return (
     <thead>
@@ -6,9 +8,7 @@ function TableHeader() {
         <th>Title</th>
         <th>Body</th>
         <th>Date</th>
-        <th style={{ width: "90px", textAlign: "right" }}>
-          Actions
-        </th>
+        <th className="tableActionsHeader">Actions</th>
       </tr>
     </thead>
   );
@@ -28,7 +28,6 @@ const formatDate = (value) => {
     : "";
 };
 
-// Convert ISO date -> YYYY-MM-DD (needed for <input type="date">)
 const toDateInputValue = (value) => {
   if (!value) return "";
   const d = new Date(value);
@@ -48,7 +47,12 @@ const getTodayDate = () => {
   return localDate.toISOString().split("T")[0];
 };
 
-function TableBody(props) {
+function TableBody({
+  journalData,
+  onDelete,
+  onUpdate,
+  onRowClick
+}) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState({
@@ -57,13 +61,8 @@ function TableBody(props) {
     date: ""
   });
 
-  if (props.characterData === null) {
-    return <caption>Data Unavailable</caption>;
-  }
-
   const startEdit = (entry) => {
     setEditingId(entry._id);
-    console.log("EDIT clicked", entry._id);
     setDraft({
       title: entry.title ?? "",
       body: entry.body ?? "",
@@ -78,7 +77,7 @@ function TableBody(props) {
   };
 
   const saveEdit = (id) => {
-    props.onUpdate(id, {
+    onUpdate(id, {
       title: draft.title,
       body: draft.body,
       date: draft.date || getTodayDate()
@@ -86,174 +85,157 @@ function TableBody(props) {
     setEditingId(null);
   };
 
-  const rows = props.journalData.map((row) => {
-    return (
-      <tr key={row._id}>
-        <td>
-          {editingId === row._id ? (
-            <input
-              value={draft.title}
-              onChange={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  title: e.target.value
-                }))
-              }
-              placeholder="Title"
-            />
-          ) : (
-            row.title
-          )}
-        </td>
+  return (
+    <tbody>
+      {journalData.map((row) => {
+        const isEditing = editingId === row._id;
 
-        <td className="body-cell">
-          {editingId === row._id ? (
-            <textarea
-              value={draft.body}
-              onChange={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  body: e.target.value
-                }))
-              }
-              placeholder="Body"
-              rows={2}
-            />
-          ) : (
-            <div className="entry-preview">{row.body}</div>
-          )}
-      </td>
+        return (
+          <tr
+            key={row._id}
+            onClick={() => {
+              if (!isEditing && onRowClick) onRowClick(row._id);
+            }}
+            className={
+              !isEditing && onRowClick
+                ? "tableRowClickable"
+                : ""
+            }>
+            <td>
+              {isEditing ? (
+                <input
+                  className="tableField"
+                  value={draft.title}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) =>
+                    setDraft((d) => ({
+                      ...d,
+                      title: e.target.value
+                    }))
+                  }
+                  placeholder="Title"
+                />
+              ) : (
+                row.title
+              )}
+            </td>
 
-        <td>
-          {editingId === row._id ? (
-            <input
-              type="date"
-              value={draft.date}
-              onChange={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  date: e.target.value
-                }))
-              }
-            />
-          ) : (
-            formatDate(row.date || row.createdAt)
-          )}
-        </td>
+            <td className="body-cell">
+              {isEditing ? (
+                <textarea
+                  className="tableField"
+                  value={draft.body}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) =>
+                    setDraft((d) => ({
+                      ...d,
+                      body: e.target.value
+                    }))
+                  }
+                  placeholder="Body"
+                  rows={2}
+                />
+              ) : (
+                <div className="entry-preview">{row.body}</div>
+              )}
+            </td>
 
-        <td
-          style={{ textAlign: "right", position: "relative" }}>
-          {editingId === row._id ? (
-            <>
-              <button onClick={() => saveEdit(row._id)}>
-                Save
-              </button>
-              <button
-                onClick={cancelEdit}
-                style={{ marginLeft: 8 }}>
-                Cancel
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() =>
-                  setOpenMenuId(
-                    openMenuId === row._id ? null : row._id
-                  )
-                }
-                aria-label="Actions"
-                title="Actions"
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: "50%",
-                  border: "1px solid #ddd",
-                  background: "white",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  lineHeight: "0"
-                }}>
-                ⋯
-              </button>
-              {openMenuId === row._id && (
-                <div
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    top: "40px",
-                    background: "white",
-                    borderRadius: 10,
-                    padding: 8,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 8,
-                    zIndex: 10,
-                    minWidth: 140,
-                    boxShadow: "0 6px 18px rgba(0,0,0,0.15)"
-                  }}>
+            <td>
+              {isEditing ? (
+                <input
+                  className="tableField"
+                  type="date"
+                  value={draft.date}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) =>
+                    setDraft((d) => ({
+                      ...d,
+                      date: e.target.value
+                    }))
+                  }
+                />
+              ) : (
+                formatDate(row.date || row.createdAt)
+              )}
+            </td>
+
+            <td
+              className="tableActionsCell"
+              onClick={(e) => e.stopPropagation()}>
+              {isEditing ? (
+                <div className="tableInlineActions">
                   <button
                     type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      console.log("EDIT clicked", row._id);
-                      startEdit(row);
-                    }}
-                    style={{
-                      background: "#20b2aa",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 10px",
-                      borderRadius: 6,
-                      cursor: "pointer",
-                      fontWeight: 600
-                    }}>
-                    Edit
+                    className="tableInlineBtn"
+                    onClick={() => saveEdit(row._id)}>
+                    Save
                   </button>
                   <button
                     type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      console.log("DELETE clicked", row._id);
-                      props.onDelete(row._id);
-                    }}
-                    style={{
-                      background: "#20b2aa",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 10px",
-                      borderRadius: 6,
-                      cursor: "pointer",
-                      fontWeight: 600
-                    }}>
-                    Delete
+                    className="tableInlineBtn tableInlineBtnCancel"
+                    onClick={cancelEdit}>
+                    Cancel
                   </button>
                 </div>
-              )}
-            </>
-          )}
-        </td>
-      </tr>
-    );
-  });
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="tableDotsBtn"
+                    onClick={() =>
+                      setOpenMenuId(
+                        openMenuId === row._id ? null : row._id
+                      )
+                    }
+                    aria-label="Actions"
+                    title="Actions">
+                    ⋯
+                  </button>
 
-  return <tbody>{rows}</tbody>;
+                  {openMenuId === row._id && (
+                    <div className="tableMenu">
+                      <button
+                        type="button"
+                        className="tableMenuBtn"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          startEdit(row);
+                        }}>
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="tableMenuBtn"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onDelete(row._id);
+                        }}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  );
 }
 
 function Table(props) {
   return (
-    <table style={{ width: "100%", tableLayout: "fixed" }}>
+    <table className="tableRoot">
       <TableHeader />
       <TableBody
         journalData={props.journalData}
         onDelete={props.onDelete}
         onUpdate={props.onUpdate}
+        onRowClick={props.onRowClick}
       />
     </table>
   );

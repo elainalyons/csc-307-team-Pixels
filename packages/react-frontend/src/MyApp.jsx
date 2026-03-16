@@ -24,14 +24,35 @@ import logoLight from "./assets/logo/Reflekt-logo-yellow-bold.png";
 import logoDark from "./assets/logo/Reflekt-logo-darkmode.png";
 
 const INVALID_TOKEN = "INVALID_TOKEN";
+const LS_KEY = "reflekt_widgets_v1";
+
+function loadWidgetState() {
+  try {
+    return JSON.parse(localStorage.getItem(LS_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveWidgetState(state) {
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 function MyApp() {
   const [entries, setEntries] = useState([]);
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
-  const API_PREFIX =
-    //"http://localhost:8000"
-    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
+  const API_PREFIX = "http://localhost:8000";
+  //"https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
   /*   -------- Date Section  --------- */
@@ -82,41 +103,71 @@ function MyApp() {
   const selectedEntry = entries.find(
     (e) => e._id === selectedEntryId
   );
-/*   -------- logout  --------- */
 
-  function logoutUser() {
-  setToken(INVALID_TOKEN);
-  setEntries([]);
-  setSelectedDateEntry(null);
-  navigate("/login");
-}
+  /* -------  Widgets Save per Day--------  */
+  const initial = useMemo(() => loadWidgetState(), []);
 
-  /*   -------- End of Date Section  --------- */
+  const [moodByDate, setMoodByDate] = useState(
+    () => initial.moodByDate || {}
+  );
+  const [quoteByDate, setQuoteByDate] = useState(
+    () => initial.quoteByDate || {}
+  );
+  const [photosByDate, setPhotosByDate] = useState(
+    () => initial.photosByDate || {}
+  );
+  const [templatesByDate, setTemplatesByDate] = useState(
+    () => initial.templatesByDate || {}
+  );
 
-  /*   -------- Mood Section  --------- */
-  //UI only for right now
-
-  const [selectedMood, setSelectedMood] = useState(null);
   useEffect(() => {
-    setSelectedMood(null);
-  }, [selectedDate]);
+    saveWidgetState({
+      moodByDate,
+      quoteByDate,
+      photosByDate,
+      templatesByDate
+    });
+  }, [moodByDate, quoteByDate, photosByDate, templatesByDate]);
 
-  /*   -------- ^^Mood Section^^  --------- */
+  //mood
+  const selectedMood = moodByDate[selectedDate] ?? null;
+  const setSelectedMood = (newMoodId) => {
+    setMoodByDate((prev) => ({
+      ...prev,
+      [selectedDate]: newMoodId
+    }));
+  };
 
-  /*   -------- Photos Section  --------- */ //UI only for right now
+  //quote
+  const quoteForDate = quoteByDate[selectedDate] ?? null;
+  const setQuoteForDate = (q) => {
+    setQuoteByDate((prev) => ({ ...prev, [selectedDate]: q }));
+  };
 
-  const [photosByDate, setPhotosByDate] = useState({});
-  const [templatesByDate, setTemplatesByDate] = useState({});
-  const [photoModeByDate, setPhotoModeByDate] = useState({});
-
+  // photos
   const uploadPhotos = photosByDate[selectedDate] || [];
   const selectedTemplates = templatesByDate[selectedDate] || [];
 
-  function addPhotosForSelectedDate(e) {
+  /*   -------- logout  --------- */
+
+  function logoutUser() {
+    setToken(INVALID_TOKEN);
+    setEntries([]);
+    setSelectedDateEntry(null);
+    navigate("/login");
+  }
+
+  /*   -------- End of Date Section  --------- */
+
+  /*   -------- Photos Section  --------- */ //UI only for right now
+
+  async function addPhotosForSelectedDate(e) {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const urls = files.map((f) => URL.createObjectURL(f));
+    const dataUrls = await Promise.all(
+      files.map(fileToDataURL)
+    );
 
     setPhotosByDate((prev) => {
       const currentUploads = prev[selectedDate] || [];
@@ -125,15 +176,10 @@ function MyApp() {
       ).length;
 
       const roomLeft = Math.max(0, 4 - templateCount);
-      const next = [...currentUploads, ...urls].slice(
+      const next = [...currentUploads, ...dataUrls].slice(
         0,
         roomLeft
       );
-
-      const keptSet = new Set(next);
-      urls.forEach((u) => {
-        if (!keptSet.has(u)) URL.revokeObjectURL(u);
-      });
 
       return { ...prev, [selectedDate]: next };
     });
@@ -145,15 +191,12 @@ function MyApp() {
     setPhotosByDate((prev) => {
       const current = prev[selectedDate] || [];
       const toRemove = current[index];
-      if (toRemove) URL.revokeObjectURL(toRemove);
+
+      if (toRemove && toRemove.startsWith("blob:")) {
+        URL.revokeObjectURL(toRemove);
+      }
 
       const next = current.filter((_, i) => i !== index);
-      if (next.length === 0) {
-        setPhotoModeByDate((m) => ({
-          ...m,
-          [selectedDate]: "none"
-        }));
-      }
 
       return { ...prev, [selectedDate]: next };
     });
@@ -479,7 +522,19 @@ function MyApp() {
 
   const widgetMap = useMemo(
     () => ({
-      quote: <QuoteOfDay apiPrefix={API_PREFIX} />,
+      quote: (
+        <QuoteOfDay
+          apiPrefix={API_PREFIX}
+          savedQuote={quoteByDate[selectedDate] ?? null}
+          onSaveQuote={(q) =>
+            setQuoteByDate((prev) => ({
+              ...prev,
+              [selectedDate]: q
+            }))
+          }
+          dateKey={selectedDate}
+        />
+      ),
       mood: (
         <MoodSelector
           value={selectedMood}
@@ -518,38 +573,37 @@ function MyApp() {
             />
           </picture>
         </div>
-       {/* ------------- NAVIGATION TOP BAR  */} 
+        {/* ------------- NAVIGATION TOP BAR  */}
         <div className="nav-links">
           <Link data-cy="nav-home" to="/home">
-            Today
-          </Link> 
-           <Link data-cy="nav-all-entries" to="/entries">
-            All Entries
+            Home
+          </Link>
+          <Link data-cy="nav-all-entries" to="/entries">
+            History
           </Link>
           <Link data-cy="nav-calendar" to="/calendar">
             Calendar
           </Link>
-            {token === INVALID_TOKEN ? (
-              <Link
-                data-cy="nav-login"
-                to="/login"
-                className="authNavBtn"
-              >
-                Login
-              </Link>
-            ) : (
-              <button
-                className="authNavBtn"
-                onClick={logoutUser}
-              >
-                Logout
-              </button>
-            )}
-            </div>
+          {token === INVALID_TOKEN ? (
+            <Link
+              data-cy="nav-login"
+              to="/login"
+              className="authNavBtn">
+              Login
+            </Link>
+          ) : (
+            <button className="authNavBtn" onClick={logoutUser}>
+              Logout
+            </button>
+          )}
+        </div>
       </nav>
 
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/"
+          element={<Navigate to="/login" replace />}
+        />
 
         <Route
           path="/login"
@@ -674,6 +728,7 @@ function MyApp() {
                           <label className="customizeLabel">
                             <input
                               type="checkbox"
+                              className="customizeCheckbox"
                               checked={!!widgetsEnabled[key]}
                               onChange={() => toggleWidget(key)}
                             />
@@ -733,18 +788,31 @@ function MyApp() {
           element={
             <div className="left-panel">
               <h1>All Journal Entries</h1>
-              <Table
-                journalData={entries}
-                onDelete={handleDelete}
-                onUpdate={handleUpdate}
-                onRowClick={(id) => navigate(`/entries/${id}`)}
-              />
+
+              <div className="tablePage">
+                <Table
+                  journalData={entries}
+                  onDelete={handleDelete}
+                  onUpdate={handleUpdate}
+                  onRowClick={(id) =>
+                    navigate(`/entries/${id}`)
+                  }
+                  quoteByDate={quoteByDate}
+                  photosByDate={photosByDate}
+                  templatesByDate={templatesByDate}
+                />
+              </div>
             </div>
           }
         />
         <Route
           path="/entries/:id"
-          element={<EntryDetailsPage />}
+          element={
+            <EntryDetailsPage
+              apiPrefix={API_PREFIX}
+              token={token}
+            />
+          }
         />
       </Routes>
     </div>
