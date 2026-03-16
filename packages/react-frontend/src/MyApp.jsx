@@ -60,7 +60,7 @@ function MyApp() {
   });
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
-  const API_PREFIX = // "http://localhost:8000"
+  const API_PREFIX =  //"http://localhost:8000"
     "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
   const navigate = useNavigate();
 
@@ -166,15 +166,21 @@ function MyApp() {
 
   /*   -------- logout  --------- */
 
-  function logoutUser() {
-    setToken(INVALID_TOKEN);
-    setEntries([]);
-    setSelectedDateEntry(null);
-    // FIX: Clear entries cache on logout so stale data isn't shown to
-    // a different user who might log in on the same device
-    localStorage.removeItem(ENTRIES_CACHE_KEY);
-    navigate("/login");
-  }
+function logoutUser() {
+  setToken(INVALID_TOKEN);
+  setEntries([]);
+  setSelectedDateEntry(null);
+  localStorage.removeItem(ENTRIES_CACHE_KEY);
+
+  //FIX: Clear widget state so guest mode never sees a previous user's data
+  localStorage.removeItem(LS_KEY);
+  setMoodByDate({});
+  setQuoteByDate({});
+  setPhotosByDate({});
+  setTemplatesByDate({});
+
+  navigate("/login");
+}
 
   /*   -------- End of Date Section  --------- */
 

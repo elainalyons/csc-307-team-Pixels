@@ -35,10 +35,7 @@ export default function QuoteOfDay({
         onSaveQuote?.(shaped);
         setLoading(false);
       })
-      .catch(() => {
-        setLoading(false);
-        setMaxedOut(true);
-      });
+      .catch(() => setLoading(false));
   }, [onSaveQuote]);
 
   useEffect(() => {
@@ -61,7 +58,9 @@ export default function QuoteOfDay({
       ) : (
         <p>{loading ? "Loading..." : "No quote yet."}</p>
       )}
+
       {maxedOut && <p>Wait to refresh</p>}
+
       <button className="quote-button" onClick={getQuote}>
         {quote ? "New Quote" : "Load Quote"}
       </button>
