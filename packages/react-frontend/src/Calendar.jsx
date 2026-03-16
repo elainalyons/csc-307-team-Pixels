@@ -187,17 +187,23 @@ function Calendar({
           <button
             type="button"
             className="calendar-arrow"
+            data-cy="calendar-prev-month"
             onClick={previousMonth}
             aria-label="Previous month"
           >
             ←
           </button>
 
-          <h1 className="calendar-month">{monthLabel}</h1>
+          <h1
+            className="calendar-month"
+            data-cy="calendar-month-label">
+            {monthLabel}
+          </h1>
 
           <button
             type="button"
             className="calendar-arrow"
+            data-cy="calendar-next-month"
             onClick={nextMonth}
             aria-label="Next month"
           >
@@ -221,6 +227,7 @@ function Calendar({
               <button
                 key={cell.dateString}
                 type="button"
+                data-cy={`calendar-day-${cell.dateString}`}
                 className={`calendar-day-box ${
                   selectedDate === cell.dateString ? "selected" : ""
                 }`}

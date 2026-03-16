@@ -33,14 +33,13 @@ const port = 8000;
 
 app.use(
   cors({
-    origin: [
-      "https://witty-desert-068c7511e.6.azurestaticapps.net", // production frontend
-      "http://localhost:5173" // local dev frontend
-    ],
+    origin:
+      "https://witty-desert-068c7511e.6.azurestaticapps.net",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
+
 
 app.use(express.json());
 

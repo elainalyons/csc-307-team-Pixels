@@ -93,6 +93,7 @@ function TableBody({
         return (
           <tr
             key={row._id}
+            data-cy="table-row"
             onClick={() => {
               if (!isEditing && onRowClick) onRowClick(row._id);
             }}
@@ -105,6 +106,7 @@ function TableBody({
               {isEditing ? (
                 <input
                   className="tableField"
+                  data-cy="table-edit-title"
                   value={draft.title}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) =>
@@ -124,6 +126,7 @@ function TableBody({
               {isEditing ? (
                 <textarea
                   className="tableField"
+                  data-cy="table-edit-body"
                   value={draft.body}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) =>
@@ -167,6 +170,7 @@ function TableBody({
                   <button
                     type="button"
                     className="tableInlineBtn"
+                    data-cy="table-save-button"
                     onClick={() => saveEdit(row._id)}>
                     Save
                   </button>
@@ -182,6 +186,7 @@ function TableBody({
                   <button
                     type="button"
                     className="tableDotsBtn"
+                    data-cy="table-actions-button"
                     onClick={() =>
                       setOpenMenuId(
                         openMenuId === row._id ? null : row._id
@@ -197,6 +202,7 @@ function TableBody({
                       <button
                         type="button"
                         className="tableMenuBtn"
+                        data-cy="table-edit-button"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
