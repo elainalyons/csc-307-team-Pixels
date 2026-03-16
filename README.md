@@ -101,6 +101,65 @@ Project architecture documentation can be found in the `docs` folder.
 - [UML Class Diagram](docs/uml-class-diagram.md)
 
 
+## End-to-End Testing (Cypress)
+
+This project includes an automated **Cypress end-to-end happy path test** that verifies the core user workflow of the Reflekt journaling application.
+
+### Test Location
+
+The test is located at:
+
+cypress/e2e/happy-path.cy.js
+
+
+### What the Test Verifies
+
+The Cypress happy path test performs the following steps automatically:
+
+1. Opens the application login page
+2. Logs in with a valid user account
+3. Creates a new journal entry
+4. Saves the entry to the backend
+5. Navigates to the **History** page
+6. Opens the entry details page
+7. Edits the journal entry
+8. Saves the updated entry
+9. Navigates to the **Calendar** page
+10. Returns to **Today**
+11. Confirms the edited journal entry persists
+12. Logs out and returns to the login screen
+
+This ensures that the full frontend + backend workflow functions correctly.
+
+### Running the Test
+
+Start the application from the root directory:
+
+npm start
+
+Then open Cypress in a second terminal:
+
+npx cypress open
+
+Select:
+
+cypress/e2e/happy-path.cy.js
+
+
+Cypress will launch a browser and automatically run the happy path test.
+
+### Expected Result
+
+All steps should complete successfully with a green checkmark indicating the test passed.
+
+### Example Test Run
+
+Below is an example of the Cypress happy path test passing:
+
+![Cypress Happy Path Passing](docs/images/cypress-happy-path.png)
+
+This test validates the core user journey of the Reflekt journaling application and ensures that critical functionality continues to work as new features are added.
+
 
 
 https://www.websequencediagrams.com/?png=msc543954272&filename=Exported.png<img width="947" height="748" alt="image" src="https://github.com/user-attachments/assets/08d5dd5d-e90a-4fad-aad5-e26bf602a312" />
