@@ -417,6 +417,7 @@ function logoutUser() {
       }
 
       setToken(body.token);
+      setShowNavLinks(true);
       setMessage(
         `Signup successful for user: ${creds.username}`
       );
