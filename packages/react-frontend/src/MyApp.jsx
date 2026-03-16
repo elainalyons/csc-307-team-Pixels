@@ -547,7 +547,7 @@ function MyApp() {
     () => ({
       quote: (
         <QuoteOfDay
-          apiPrefix={API_PREFIX}
+          key={selectedDate}
           savedQuote={quoteByDate[selectedDate] ?? null}
           onSaveQuote={(q) =>
             setQuoteByDate((prev) => ({
@@ -555,7 +555,6 @@ function MyApp() {
               [selectedDate]: q
             }))
           }
-          dateKey={selectedDate}
         />
       ),
       mood: (
