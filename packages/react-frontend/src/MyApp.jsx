@@ -25,6 +25,7 @@ import logoDark from "./assets/logo/Reflekt-logo-darkmode.png";
 
 const INVALID_TOKEN = "INVALID_TOKEN";
 const LS_KEY = "reflekt_widgets_v1";
+const ENTRIES_CACHE_KEY = "reflekt_entries_cache";
 
 function loadWidgetState() {
   try {
@@ -48,7 +49,15 @@ function fileToDataURL(file) {
 }
 
 function MyApp() {
-  const [entries, setEntries] = useState([]);
+  const [entries, setEntries] = useState(() => {
+    //FIX: Load cached entries immediately so the UI isn't blank on first render
+    try {
+      const cached = localStorage.getItem(ENTRIES_CACHE_KEY);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [token, setToken] = useState(INVALID_TOKEN);
   const [message, setMessage] = useState("");
   const API_PREFIX = // "http://localhost:8000"
@@ -56,6 +65,14 @@ function MyApp() {
   const navigate = useNavigate();
 
   const [showNavLinks, setShowNavLinks] = useState(false);
+
+  // FIX: Ping the server on app mount to wake it from Azure cold start
+  // This runs while the user is on the login screen, so by the time they
+  // submit credentials the server is already warm.
+  useEffect(() => {
+    fetch(`${API_PREFIX}/health`).catch(() => {});
+  }, []);
+
   /*   -------- Date Section  --------- */
 
   const getTodayDate = () => {
@@ -153,6 +170,9 @@ function MyApp() {
     setToken(INVALID_TOKEN);
     setEntries([]);
     setSelectedDateEntry(null);
+    // FIX: Clear entries cache on logout so stale data isn't shown to
+    // a different user who might log in on the same device
+    localStorage.removeItem(ENTRIES_CACHE_KEY);
     navigate("/login");
   }
 
@@ -467,7 +487,8 @@ function MyApp() {
       });
   }, [selectedDate, token, navigate]);
 
-  //only get entries when token is valid
+  // FIX: Cache entries in localStorage after every successful fetch so
+  // the next page load shows data instantly while the fresh fetch is in flight
   useEffect(() => {
     if (token === INVALID_TOKEN) {
       setEntries([]);
@@ -491,7 +512,17 @@ function MyApp() {
       })
       .then((json) => {
         if (!json) return;
-        setEntries(json.entries ?? json["entries"] ?? []);
+        const fetched = json.entries ?? json["entries"] ?? [];
+        setEntries(fetched);
+        // Write fresh data to cache for the next session
+        try {
+          localStorage.setItem(
+            ENTRIES_CACHE_KEY,
+            JSON.stringify(fetched)
+          );
+        } catch {
+          // localStorage quota exceeded — silently skip caching
+        }
       })
       .catch((error) =>
         setMessage(`Fetch entries failed: ${error.message}`)

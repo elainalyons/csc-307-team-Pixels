@@ -1,21 +1,17 @@
 import React, { useCallback, useState } from "react";
 
-export default function QuoteOfDay({
-  savedQuote,
-  onSaveQuote
-}) {
-  const API_PREFIX = //"http://localhost:8000";
-    "https://reflekt-journal-dgdpg9a7azgfhrd8.westus-01.azurewebsites.net";
-
+export default function QuoteOfDay({ savedQuote, onSaveQuote }) {
   const [quote, setQuote] = useState(() => savedQuote ?? null);
   const [loading, setLoading] = useState(() => !savedQuote);
   const [maxedOut, setMaxedOut] = useState(false);
 
+  // FIX: Call the public quote API directly instead of routing through your
+  // Azure backend.
   const getQuote = useCallback(() => {
     setLoading(true);
     setMaxedOut(false);
 
-    fetch(`${API_PREFIX}/quote`)
+    fetch("https://api.quotable.io/random")
       .then(async (res) => {
         if (!res.ok) {
           setMaxedOut(true);
@@ -26,11 +22,15 @@ export default function QuoteOfDay({
       })
       .then((data) => {
         if (!data) return;
-        setQuote(data);
-        onSaveQuote?.(data);
+        const shaped = { text: data.content, author: data.author };
+        setQuote(shaped);
+        onSaveQuote?.(shaped);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoading(false);
+        setMaxedOut(true);
+      });
   }, [onSaveQuote]);
 
   return (
@@ -43,9 +43,7 @@ export default function QuoteOfDay({
       ) : (
         <p>{loading ? "Loading..." : "No quote yet."}</p>
       )}
-
       {maxedOut && <p>Wait to refresh</p>}
-
       <button className="quote-button" onClick={getQuote}>
         {quote ? "New Quote" : "Load Quote"}
       </button>
