@@ -154,8 +154,6 @@ button.calendar-day-box {
   padding: 18px;
   background: transparent;
   color: inherit;
-  max-height: 70vh;
-  overflow-y: auto;
 }
 
 .calendar-details-date {
@@ -201,7 +199,6 @@ button.calendar-day-box {
 
   .calendar-details {
     grid-row: auto;
-    max-height: none;
   }
 }
 

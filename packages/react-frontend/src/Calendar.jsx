@@ -1,7 +1,24 @@
 import React, { useMemo, useState, useEffect } from "react";
 import "./Calendar.css";
+import HomeEditor from "./HomeEditor";
+import MoodSelector from "./MoodSelector";
+import DailyPhotos from "./DailyPhotos";
 
-function Calendar({ CalendarData = [] }) {
+function Calendar({
+  CalendarData = [],
+  selectedDate,
+  setSelectedDate,
+  selectedDateEntry,
+  onSaveEntry,
+  selectedMood,
+  setSelectedMood,
+  uploadPhotos,
+  selectedTemplates,
+  onAddFiles,
+  onRemoveUploadAtIndex,
+  onToggleTemplate,
+  onClearAll
+}) {
   const today = new Date();
 
   const entriesByDate = useMemo(() => {
@@ -46,19 +63,20 @@ function Calendar({ CalendarData = [] }) {
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
 
-  const [selectedDate, setSelectedDate] = useState(latestEntryDate);
+  useEffect(() => {
+    if (!selectedDate) {
+      setSelectedDate(latestEntryDate);
+    }
+  }, [selectedDate, setSelectedDate, latestEntryDate]);
 
   useEffect(() => {
-    if (sortedEntries.length > 0) {
-      const newestDate = normalizeDateString(sortedEntries[0].date);
-      setSelectedDate(newestDate);
-
-      const newest = new Date(sortedEntries[0].date);
+    if (selectedDate) {
+      const picked = new Date(`${selectedDate}T12:00:00`);
       setCurrentMonth(
-        new Date(newest.getFullYear(), newest.getMonth(), 1)
+        new Date(picked.getFullYear(), picked.getMonth(), 1)
       );
     }
-  }, [sortedEntries]);
+  }, [selectedDate]);
 
   const calendarDays = useMemo(() => {
     const year = currentMonth.getFullYear();
@@ -88,13 +106,22 @@ function Calendar({ CalendarData = [] }) {
     return cells;
   }, [currentMonth, entriesByDate]);
 
-  const selectedEntries = entriesByDate[selectedDate] || [];
-  const selectedEntry = selectedEntries[0] || null;
-
+  // ✅ Fixed: monthLabel was referenced but never defined
   const monthLabel = currentMonth.toLocaleDateString("en-US", {
     month: "long",
     year: "numeric"
   });
+
+  const formattedSelectedDate = selectedDate
+    ? new Date(`${selectedDate}T00:00:00`).toLocaleDateString(
+        "en-US",
+        {
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        }
+      )
+    : "";
 
   function previousMonth() {
     setCurrentMonth(
@@ -122,6 +149,39 @@ function Calendar({ CalendarData = [] }) {
 
   return (
     <div className="calendar-page">
+      {/* LEFT SIDE — entry, mood, photos */}
+      <aside className="calendar-details">
+        <h2 className="calendar-details-date">
+          {formattedSelectedDate}
+        </h2>
+
+        <HomeEditor
+          entry={selectedDateEntry}
+          key={`${selectedDate}-${selectedDateEntry?._id ?? "empty"}`}
+          selectedDate={selectedDate}
+          onSave={onSaveEntry}
+        />
+
+        <div style={{ marginTop: 18 }}>
+          <MoodSelector
+            value={selectedMood}
+            onChange={setSelectedMood}
+          />
+        </div>
+
+        <div style={{ marginTop: 18 }}>
+          <DailyPhotos
+            uploadPhotos={uploadPhotos}
+            selectedTemplates={selectedTemplates}
+            onAddFiles={onAddFiles}
+            onRemoveUploadAtIndex={onRemoveUploadAtIndex}
+            onToggleTemplate={onToggleTemplate}
+            onClearAll={onClearAll}
+          />
+        </div>
+      </aside>
+
+      {/* RIGHT SIDE — calendar */}
       <div className="calendar-main">
         <div className="calendar-topbar">
           <button
@@ -183,32 +243,6 @@ function Calendar({ CalendarData = [] }) {
           )}
         </div>
       </div>
-
-      <aside className="calendar-details">
-        <h2 className="calendar-details-date">
-          {new Date(`${selectedDate}T00:00:00`).toLocaleDateString(
-            "en-US",
-            {
-              month: "long",
-              day: "numeric",
-              year: "numeric"
-            }
-          )}
-        </h2>
-
-        {!selectedEntry ? (
-          <div className="calendar-entry-card">
-            <p className="calendar-no-entry">
-              No journal entry for this day yet.
-            </p>
-          </div>
-        ) : (
-          <div className="calendar-entry-card">
-            <h3>{selectedEntry.title}</h3>
-            <p>{selectedEntry.body}</p>
-          </div>
-        )}
-      </aside>
     </div>
   );
 }

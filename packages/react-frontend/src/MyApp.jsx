@@ -842,9 +842,24 @@ function MyApp() {
             </div>
           }
         />
-        <Route
-          path="/calendar"
-          element={<Calendar CalendarData={entries} />}
+        <Route path="/calendar"
+          element={
+            <Calendar
+              CalendarData={entries}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              selectedDateEntry={selectedDateEntry}
+              onSaveEntry={saveSelectedDateEntry}
+              selectedMood={selectedMood}
+              setSelectedMood={setSelectedMood}
+              uploadPhotos={uploadPhotos}
+              selectedTemplates={selectedTemplates}
+              onAddFiles={addPhotosForSelectedDate}
+              onRemoveUploadAtIndex={removePhotoForSelectedDate}
+              onToggleTemplate={toggleTemplateForSelectedDate}
+              onClearAll={clearAllPhotosForSelectedDate}
+            />
+          }
         />
         <Route
           path="/entries"
